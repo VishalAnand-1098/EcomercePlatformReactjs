@@ -14,6 +14,14 @@ const ProductCard = ({ product }) => {
     await addToCart(product.id, 1);
   };
 
+  // Calculate discounted price
+  const discountPercentage = product.discount_percentage || 0;
+  const originalPrice = product.price;
+  const discountedPrice = discountPercentage > 0 
+    ? originalPrice - (originalPrice * discountPercentage / 100) 
+    : originalPrice;
+  const hasDiscount = discountPercentage > 0;
+
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300">
       <Link to={`/products/${product.id}`}>
@@ -41,9 +49,23 @@ const ProductCard = ({ product }) => {
         <p className="text-gray-600 text-sm mb-3 line-clamp-2">{product.description}</p>
 
         <div className="flex items-center justify-between">
-          <span className="text-2xl font-bold text-blue-600">
-            {formatPrice(product.price)}
-          </span>
+          <div className="flex flex-col">
+            <div className="flex items-center gap-2">
+              <span className="text-2xl font-bold text-blue-600">
+                {formatPrice(discountedPrice)}
+              </span>
+              {hasDiscount && (
+                <span className="text-sm text-gray-500 line-through">
+                  {formatPrice(originalPrice)}
+                </span>
+              )}
+            </div>
+            {hasDiscount && (
+              <span className="text-green-600 text-sm font-semibold">
+                {discountPercentage}% off
+              </span>
+            )}
+          </div>
           
           {isAuthenticated && product.stock > 0 && (
             <Button

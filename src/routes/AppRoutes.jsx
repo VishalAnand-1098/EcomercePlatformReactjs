@@ -20,6 +20,7 @@ import OrderSuccess from '../pages/OrderSuccess';
 import AdminDashboard from '../pages/admin/AdminDashboard';
 import ManageProducts from '../pages/admin/ManageProducts';
 import ManageOrders from '../pages/admin/ManageOrders';
+import OrderDetails from '../pages/admin/OrderDetails';
 
 const AppRoutes = () => {
   return (
@@ -90,6 +91,14 @@ const AppRoutes = () => {
               <Sidebar />
               <ManageOrders />
             </div>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/orders/:id"
+        element={
+          <ProtectedRoute adminOnly>
+            <OrderDetails />
           </ProtectedRoute>
         }
       />

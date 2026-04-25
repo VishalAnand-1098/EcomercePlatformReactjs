@@ -98,7 +98,11 @@ export const CartProvider = ({ children }) => {
   const getCartTotal = () => {
     return cartItems.reduce((total, item) => {
       const price = item.ecommerce_products?.price || 0;
-      return total + price * item.quantity;
+      const discountPercentage = item.ecommerce_products?.discount_percentage || 0;
+      const discountedPrice = discountPercentage > 0 
+        ? price - (price * discountPercentage / 100) 
+        : price;
+      return total + discountedPrice * item.quantity;
     }, 0);
   };
 

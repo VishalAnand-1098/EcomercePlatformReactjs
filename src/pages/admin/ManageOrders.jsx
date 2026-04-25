@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { getAllOrders, updateOrderStatus } from '../../services/orderService';
 import { formatPrice, formatDateTime, formatOrderStatus, getStatusColor } from '../../utils/formatters';
 import Loader from '../../components/common/Loader';
 import toast from 'react-hot-toast';
+import { FaEye } from 'react-icons/fa';
 
 const ManageOrders = () => {
   const [orders, setOrders] = useState([]);
@@ -53,6 +55,7 @@ const ManageOrders = () => {
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Total</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Update Status</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
                   </tr>
                 </thead>
@@ -80,6 +83,15 @@ const ManageOrders = () => {
                           <option value="delivered">Delivered</option>
                           <option value="cancelled">Cancelled</option>
                         </select>
+                      <td className="px-6 py-4">
+                        <Link
+                          to={`/admin/orders/${order.id}`}
+                          className="inline-flex items-center px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
+                        >
+                          <FaEye className="mr-1" />
+                          View Details
+                        </Link>
+                      </td>
                       </td>
                     </tr>
                   ))}

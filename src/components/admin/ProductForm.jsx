@@ -14,6 +14,7 @@ const ProductForm = ({ product, onSuccess, onCancel }) => {
     stock: product?.stock || '',
     category_id: product?.category_id || '',
     image_url: product?.image_url || '',
+    discount_percentage: product?.discount_percentage || 0,
   });
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -83,7 +84,7 @@ const ProductForm = ({ product, onSuccess, onCancel }) => {
 
       <div className="grid grid-cols-2 gap-4">
         <Input
-          label="Price"
+          label="Price (₹)"
           type="number"
           step="0.01"
           name="price"
@@ -101,6 +102,18 @@ const ProductForm = ({ product, onSuccess, onCancel }) => {
           required
         />
       </div>
+
+      <Input
+        label="Discount (%)"
+        type="number"
+        step="1"
+        min="0"
+        max="100"
+        name="discount_percentage"
+        value={formData.discount_percentage}
+        onChange={handleChange}
+        placeholder="Enter discount percentage (0-100)"
+      />
 
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">

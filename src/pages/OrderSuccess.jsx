@@ -80,22 +80,43 @@ const OrderSuccess = () => {
           <div className="mb-6">
             <h2 className="text-xl font-semibold mb-4">Order Items</h2>
             <div className="space-y-3">
-              {order.items.map((item) => (
-                <div key={item.id} className="flex justify-between items-center py-3 border-b">
-                  <div className="flex items-center space-x-4">
-                    <img
-                      src={item.ecommerce_products?.image_url || 'https://via.placeholder.com/60'}
-                      alt={item.ecommerce_products?.name}
-                      className="w-16 h-16 object-cover rounded"
-                    />
-                    <div>
-                      <p className="font-semibold">{item.ecommerce_products?.name}</p>
-                      <p className="text-sm text-gray-600">Quantity: {item.quantity}</p>
+              {order.items.map((item) => {
+                const product = item.ecommerce_products;
+                const discountPercentage = product?.discount_percentage || 0;
+                const originalPrice = product?.price || 0;
+                const hasDiscount = discountPercentage > 0;
+                
+                return (
+                  <div key={item.id} className="py-3 border-b">
+                    <div className="flex justify-between items-center">
+                      <div className="flex items-center space-x-4">
+                        <img
+                          src={product?.image_url || 'https://via.placeholder.com/60'}
+                          alt={product?.name}
+                          className="w-16 h-16 object-cover rounded"
+                        />
+                        <div>
+                          <p className="font-semibold">{product?.name}</p>
+                          <p className="text-sm text-gray-600">Quantity: {item.quantity}</p>
+                          {hasDiscount && (
+                            <p className="text-xs text-green-600 font-semibold mt-1">
+                              {discountPercentage}% discount applied
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-semibold">{formatPrice(item.price * item.quantity)}</p>
+                        {hasDiscount && (
+                          <p className="text-xs text-gray-400 line-through">
+                            {formatPrice(originalPrice * item.quantity)}
+                          </p>
+                        )}
+                      </div>
                     </div>
                   </div>
-                  <p className="font-semibold">{formatPrice(item.price * item.quantity)}</p>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
 

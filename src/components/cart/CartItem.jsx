@@ -16,7 +16,15 @@ const CartItem = ({ item }) => {
   };
 
   const product = item.ecommerce_products;
-  const subtotal = product.price * item.quantity;
+  
+  // Calculate discounted price
+  const discountPercentage = product.discount_percentage || 0;
+  const originalPrice = product.price;
+  const discountedPrice = discountPercentage > 0 
+    ? originalPrice - (originalPrice * discountPercentage / 100) 
+    : originalPrice;
+  const hasDiscount = discountPercentage > 0;
+  const subtotal = discountedPrice * item.quantity;
 
   return (
     <div className="flex items-center space-x-4 p-4 bg-white rounded-lg shadow-md">
@@ -30,7 +38,19 @@ const CartItem = ({ item }) => {
       {/* Product Details */}
       <div className="flex-1">
         <h3 className="text-lg font-semibold text-gray-900">{product.name}</h3>
-        <p className="text-blue-600 font-semibold">{formatPrice(product.price)}</p>
+        <div className="flex items-center gap-2 mt-1">
+          <p className="text-blue-600 font-semibold">{formatPrice(discountedPrice)}</p>
+          {hasDiscount && (
+            <>
+              <span className="text-sm text-gray-500 line-through">
+                {formatPrice(originalPrice)}
+              </span>
+              <span className="text-xs text-green-600 font-semibold">
+                {discountPercentage}% off
+              </span>
+            </>
+          )}
+        </div>
       </div>
 
       {/* Quantity Controls */}

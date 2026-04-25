@@ -16,7 +16,8 @@ export const getCartItems = async (userId) => {
           name,
           price,
           image_url,
-          stock
+          stock,
+          discount_percentage
         )
       `)
       .eq('user_id', userId);

@@ -44,6 +44,7 @@ CREATE TABLE ecommerce_products (
   image_url TEXT,
   category_id UUID REFERENCES ecommerce_categories(id) ON DELETE SET NULL,
   stock INTEGER DEFAULT 0,
+  discount_percentage INTEGER DEFAULT 0 CHECK (discount_percentage >= 0 AND discount_percentage <= 100),
   created_at TIMESTAMP DEFAULT NOW()
 );
 
@@ -60,18 +61,50 @@ CREATE TABLE ecommerce_cart (
 );
 
 -- =====================================================
--- 5. ORDERS TABLE
+-- 5. COUPONS TABLE
+-- =====================================================
+CREATE TABLE ecommerce_coupons (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  code VARCHAR(50) UNIQUE NOT NULL,
+  discount_type VARCHAR(20) NOT NULL CHECK (discount_type IN ('percentage', 'fixed')),
+  discount_value DECIMAL(10, 2) NOT NULL,
+  min_purchase_amount DECIMAL(10, 2) DEFAULT 0,
+  max_discount_amount DECIMAL(10, 2),
+  usage_limit INTEGER,
+  used_count INTEGER DEFAULT 0,
+  valid_from TIMESTAMP DEFAULT NOW(),
+  valid_until TIMESTAMP,
+  is_active BOOLEAN DEFAULT TRUE,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- =====================================================
+-- 6. ORDERS TABLE
 -- =====================================================
 CREATE TABLE ecommerce_orders (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID REFERENCES ecommerce_users(id) ON DELETE CASCADE,
   total_amount DECIMAL(10, 2) NOT NULL,
+  subtotal DECIMAL(10, 2) NOT NULL,
+  tax_amount DECIMAL(10, 2) DEFAULT 0,
+  shipping_amount DECIMAL(10, 2) DEFAULT 0,
+  discount_amount DECIMAL(10, 2) DEFAULT 0,
+  coupon_id UUID REFERENCES ecommerce_coupons(id) ON DELETE SET NULL,
+  payment_method VARCHAR(50) NOT NULL,
+  payment_status VARCHAR(50) DEFAULT 'pending' CHECK (payment_status IN ('pending', 'paid', 'failed', 'refunded')),
   status VARCHAR(50) DEFAULT 'pending' CHECK (status IN ('pending', 'processing', 'shipped', 'delivered', 'cancelled')),
+  shipping_name VARCHAR(255),
+  shipping_email VARCHAR(255),
+  shipping_phone VARCHAR(50),
+  shipping_address TEXT,
+  shipping_city VARCHAR(100),
+  shipping_zipcode VARCHAR(20),
+  shipping_country VARCHAR(100),
   created_at TIMESTAMP DEFAULT NOW()
 );
 
 -- =====================================================
--- 6. ORDER ITEMS TABLE
+-- 7. ORDER ITEMS TABLE
 -- =====================================================
 CREATE TABLE ecommerce_order_items (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -83,7 +116,23 @@ CREATE TABLE ecommerce_order_items (
 );
 
 -- =====================================================
--- 7. CONTACT TABLE
+-- 8. PAYMENT TRANSACTIONS TABLE
+-- =====================================================
+CREATE TABLE ecommerce_payment_transactions (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  order_id UUID REFERENCES ecommerce_orders(id) ON DELETE CASCADE,
+  transaction_id VARCHAR(255) UNIQUE,
+  payment_method VARCHAR(50) NOT NULL,
+  payment_status VARCHAR(50) DEFAULT 'pending' CHECK (payment_status IN ('pending', 'completed', 'failed', 'refunded')),
+  amount DECIMAL(10, 2) NOT NULL,
+  currency VARCHAR(10) DEFAULT 'USD',
+  payment_gateway VARCHAR(50),
+  gateway_response TEXT,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- =====================================================
+-- 9. CONTACT TABLE
 -- =====================================================
 CREATE TABLE ecommerce_contact (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -100,8 +149,12 @@ CREATE TABLE ecommerce_contact (
 CREATE INDEX idx_products_category ON ecommerce_products(category_id);
 CREATE INDEX idx_cart_user ON ecommerce_cart(user_id);
 CREATE INDEX idx_orders_user ON ecommerce_orders(user_id);
+CREATE INDEX idx_orders_coupon ON ecommerce_orders(coupon_id);
 CREATE INDEX idx_order_items_order ON ecommerce_order_items(order_id);
 CREATE INDEX idx_users_email ON ecommerce_users(email);
+CREATE INDEX idx_coupons_code ON ecommerce_coupons(code);
+CREATE INDEX idx_coupons_active ON ecommerce_coupons(is_active);
+CREATE INDEX idx_payment_transactions_order ON ecommerce_payment_transactions(order_id);
 
 -- =====================================================
 -- ROW LEVEL SECURITY (RLS) POLICIES
@@ -112,13 +165,19 @@ ALTER TABLE ecommerce_users ENABLE ROW LEVEL SECURITY;
 ALTER TABLE ecommerce_categories ENABLE ROW LEVEL SECURITY;
 ALTER TABLE ecommerce_products ENABLE ROW LEVEL SECURITY;
 ALTER TABLE ecommerce_cart ENABLE ROW LEVEL SECURITY;
+ALTER TABLE ecommerce_coupons ENABLE ROW LEVEL SECURITY;
 ALTER TABLE ecommerce_orders ENABLE ROW LEVEL SECURITY;
 ALTER TABLE ecommerce_order_items ENABLE ROW LEVEL SECURITY;
+ALTER TABLE ecommerce_payment_transactions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE ecommerce_contact ENABLE ROW LEVEL SECURITY;
 
 -- Public read access for categories and products
 CREATE POLICY "Public categories read" ON ecommerce_categories FOR SELECT USING (true);
 CREATE POLICY "Public products read" ON ecommerce_products FOR SELECT USING (true);
+
+-- Coupons - public read for active coupons
+CREATE POLICY "Public coupons read" ON ecommerce_coupons FOR SELECT USING (is_active = true);
+CREATE POLICY "Coupons manage" ON ecommerce_coupons FOR ALL USING (true);
 
 -- Users table policies (minimal access needed since we use custom auth)
 CREATE POLICY "Users select own data" ON ecommerce_users FOR SELECT USING (true);
@@ -133,6 +192,9 @@ CREATE POLICY "Users access own orders" ON ecommerce_orders FOR ALL USING (true)
 
 -- Order items - accessible via order relationship
 CREATE POLICY "Order items accessible" ON ecommerce_order_items FOR ALL USING (true);
+
+-- Payment transactions - accessible
+CREATE POLICY "Payment transactions accessible" ON ecommerce_payment_transactions FOR ALL USING (true);
 
 -- Contact messages - anyone can insert
 CREATE POLICY "Anyone can submit contact" ON ecommerce_contact FOR INSERT WITH CHECK (true);
@@ -166,6 +228,14 @@ INSERT INTO ecommerce_products (name, description, price, category_id, stock, im
   ('Running Shoes', 'Lightweight running shoes for optimal performance', 79.99, (SELECT id FROM ecommerce_categories WHERE name = 'Sports'), 45, 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400'),
   ('JavaScript Book', 'Complete guide to modern JavaScript', 39.99, (SELECT id FROM ecommerce_categories WHERE name = 'Books'), 25, 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400'),
   ('Yoga Mat', 'Non-slip yoga mat for home workouts', 24.99, (SELECT id FROM ecommerce_categories WHERE name = 'Sports'), 60, 'https://images.unsplash.com/photo-1601925260368-ae2f83cf8b7f?w=400');
+
+-- Insert sample coupons
+INSERT INTO ecommerce_coupons (code, discount_type, discount_value, min_purchase_amount, max_discount_amount, usage_limit, is_active, valid_until) VALUES
+  ('SAVE10', 'percentage', 10, 0, NULL, 100, true, NOW() + INTERVAL '30 days'),
+  ('SAVE20', 'percentage', 20, 50, NULL, 50, true, NOW() + INTERVAL '30 days'),
+  ('FLAT50', 'fixed', 50, 100, NULL, 25, true, NOW() + INTERVAL '30 days'),
+  ('WELCOME15', 'percentage', 15, 0, 30, 200, true, NOW() + INTERVAL '90 days'),
+  ('FREESHIP', 'fixed', 5, 30, NULL, NULL, true, NOW() + INTERVAL '60 days');
 
 -- =====================================================
 -- CREATE ADMIN USER

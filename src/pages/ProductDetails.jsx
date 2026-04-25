@@ -17,20 +17,20 @@ const ProductDetails = () => {
   const { isAuthenticated } = useAuth();
 
   useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        setLoading(true);
+        const data = await getProductById(id);
+        setProduct(data);
+      } catch (error) {
+        console.error('Error fetching product:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchProduct();
   }, [id]);
-
-  const fetchProduct = async () => {
-    try {
-      setLoading(true);
-      const data = await getProductById(id);
-      setProduct(data);
-    } catch (error) {
-      console.error('Error fetching product:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleAddToCart = async () => {
     await addToCart(product.id, quantity);
@@ -65,6 +65,14 @@ const ProductDetails = () => {
     );
   }
 
+  // Calculate discounted price
+  const discountPercentage = product.discount_percentage || 0;
+  const originalPrice = product.price;
+  const discountedPrice = discountPercentage > 0 
+    ? originalPrice - (originalPrice * discountPercentage / 100) 
+    : originalPrice;
+  const hasDiscount = discountPercentage > 0;
+
   return (
     <div className="min-h-screen bg-gray-50 py-12">
       <div className="container mx-auto px-4">
@@ -97,9 +105,26 @@ const ProductDetails = () => {
               )}
 
               <div className="mb-6">
-                <span className="text-4xl font-bold text-blue-600">
-                  {formatPrice(product.price)}
-                </span>
+                <div className="flex items-center gap-4">
+                  <span className="text-4xl font-bold text-blue-600">
+                    {formatPrice(discountedPrice)}
+                  </span>
+                  {hasDiscount && (
+                    <>
+                      <span className="text-2xl text-gray-500 line-through">
+                        {formatPrice(originalPrice)}
+                      </span>
+                      <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-lg font-semibold">
+                        {discountPercentage}% OFF
+                      </span>
+                    </>
+                  )}
+                </div>
+                {hasDiscount && (
+                  <p className="text-green-600 font-medium mt-2">
+                    You save {formatPrice(originalPrice - discountedPrice)}!
+                  </p>
+                )}
               </div>
 
               <div className="mb-6">

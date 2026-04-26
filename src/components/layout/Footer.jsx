@@ -2,8 +2,6 @@ import { Link } from 'react-router-dom';
 import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin } from 'react-icons/fa';
 
 const Footer = () => {
-  const currentYear = new Date().getFullYear();
-
   return (
     <footer className="bg-gray-900 text-white mt-auto">
       <div className="container mx-auto px-4 py-12">
@@ -97,7 +95,28 @@ const Footer = () => {
         </div>
 
         <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400 text-sm">
-          <p>&copy; {currentYear} ShopHub. All rights reserved.</p>
+          <p className="mb-2">&copy; 2026 · All Rights Reserved</p>
+          <p className="flex items-center justify-center flex-wrap gap-1">
+            <span>Powered by</span>
+            <a 
+              href="https://creationnext.co.in/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-blue-400 hover:text-blue-300 transition-colors font-medium"
+            >
+              Creation Next
+            </a>
+            <span>|</span>
+            <span>Developed by</span>
+            <a 
+              href="https://www.softcareweb.in/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-blue-400 hover:text-blue-300 transition-colors font-medium"
+            >
+              SoftcareWeb
+            </a>
+          </p>
         </div>
       </div>
     </footer>

@@ -3,6 +3,7 @@ import { useAuth } from '../../hooks/useAuth';
 import { useCart } from '../../hooks/useCart';
 import { FaShoppingCart, FaUser, FaSignOutAlt, FaUserCircle, FaBox } from 'react-icons/fa';
 import { MdDashboard } from 'react-icons/md';
+import MegaMenu from './MegaMenu';
 
 const Header = () => {
   const { isAuthenticated, user, logoutUser } = useAuth();
@@ -25,6 +26,7 @@ const Header = () => {
             <Link to="/" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
               Home
             </Link>
+            <MegaMenu />
             <Link to="/products" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
               Products
             </Link>

@@ -20,23 +20,35 @@ export const getAllProducts = async (options = {}) => {
 
     let query = supabase
       .from('ecommerce_products')
-      .select('*, ecommerce_categories(name)', { count: 'exact' });
+      .select('*, ecommerce_categories(name, parent_id)', { count: 'exact' });
 
     // Apply filters
     if (category) {
-      query = query.eq('category_id', category);
+      // Get all subcategories for the selected category
+      const { data: allCategories } = await supabase
+        .from('ecommerce_categories')
+        .select('id, parent_id');
+      
+      const categoryIds = [category];
+      // Add subcategories if this is a parent category
+      if (allCategories) {
+        const subcategories = allCategories.filter(cat => cat.parent_id === category);
+        categoryIds.push(...subcategories.map(sub => sub.id));
+      }
+      
+      query = query.in('category_id', categoryIds);
     }
 
     if (search) {
       query = query.ilike('name', `%${search}%`);
     }
 
-    if (minPrice !== null) {
-      query = query.gte('price', minPrice);
+    if (minPrice !== null && minPrice !== '') {
+      query = query.gte('price', parseFloat(minPrice));
     }
 
-    if (maxPrice !== null) {
-      query = query.lte('price', maxPrice);
+    if (maxPrice !== null && maxPrice !== '') {
+      query = query.lte('price', parseFloat(maxPrice));
     }
 
     // Apply sorting
@@ -71,7 +83,7 @@ export const getProductById = async (productId) => {
   try {
     const { data, error } = await supabase
       .from('ecommerce_products')
-      .select('*, ecommerce_categories(id, name)')
+      .select('*, ecommerce_categories(id, name, parent_id)')
       .eq('id', productId)
       .single();
 
@@ -92,7 +104,7 @@ export const getFeaturedProducts = async (limit = 8) => {
   try {
     const { data, error } = await supabase
       .from('ecommerce_products')
-      .select('*, ecommerce_categories(name)')
+      .select('*, ecommerce_categories(name, parent_id)')
       .order('created_at', { ascending: false })
       .limit(limit);
 

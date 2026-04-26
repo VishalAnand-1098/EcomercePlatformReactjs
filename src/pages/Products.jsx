@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { getAllProducts } from '../services/productService';
 import ProductGrid from '../components/product/ProductGrid';
 import ProductFilter from '../components/product/ProductFilter';
@@ -6,6 +7,7 @@ import ProductSearch from '../components/product/ProductSearch';
 import Pagination from '../components/common/Pagination';
 
 const Products = () => {
+  const [searchParams] = useSearchParams();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -18,6 +20,14 @@ const Products = () => {
     sortBy: 'created_at',
     sortOrder: 'desc',
   });
+
+  // Read category from URL parameter
+  useEffect(() => {
+    const categoryFromUrl = searchParams.get('category');
+    if (categoryFromUrl) {
+      setFilters(prev => ({ ...prev, category: categoryFromUrl }));
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     fetchProducts();

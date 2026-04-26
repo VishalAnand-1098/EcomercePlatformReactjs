@@ -21,6 +21,7 @@ import AdminDashboard from '../pages/admin/AdminDashboard';
 import ManageProducts from '../pages/admin/ManageProducts';
 import ManageOrders from '../pages/admin/ManageOrders';
 import OrderDetails from '../pages/admin/OrderDetails';
+import ManageCategories from '../pages/admin/ManageCategories';
 
 const AppRoutes = () => {
   return (
@@ -90,6 +91,17 @@ const AppRoutes = () => {
             <div className="flex">
               <Sidebar />
               <ManageOrders />
+            </div>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/admin/categories"
+        element={
+          <ProtectedRoute adminOnly>
+            <div className="flex">
+              <Sidebar />
+              <ManageCategories />
             </div>
           </ProtectedRoute>
         }

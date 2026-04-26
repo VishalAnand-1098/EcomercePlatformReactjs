@@ -42,14 +42,22 @@ export const getCategoryById = async (categoryId) => {
 
 /**
  * Create new category (Admin only)
- * @param {string} name
+ * @param {object} categoryData - { name, description, parent_id }
  * @returns {Promise<object>}
  */
-export const createCategory = async (name) => {
+export const createCategory = async (categoryData) => {
   try {
+    const { name, description, parent_id } = categoryData;
+    
+    const insertData = {
+      name,
+      description: description || null,
+      parent_id: parent_id || null
+    };
+
     const { data, error } = await supabase
       .from('ecommerce_categories')
-      .insert([{ name }])
+      .insert([insertData])
       .select()
       .single();
 
@@ -64,14 +72,22 @@ export const createCategory = async (name) => {
 /**
  * Update category (Admin only)
  * @param {string} categoryId
- * @param {string} name
+ * @param {object} categoryData - { name, description, parent_id }
  * @returns {Promise<object>}
  */
-export const updateCategory = async (categoryId, name) => {
+export const updateCategory = async (categoryId, categoryData) => {
   try {
+    const { name, description, parent_id } = categoryData;
+    
+    const updateData = {
+      name,
+      description: description || null,
+      parent_id: parent_id || null
+    };
+
     const { data, error } = await supabase
       .from('ecommerce_categories')
-      .update({ name })
+      .update(updateData)
       .eq('id', categoryId)
       .select()
       .single();

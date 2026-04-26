@@ -3,15 +3,12 @@ import { useState, useEffect } from 'react';
 import { getFeaturedProducts } from '../services/productService';
 import ProductGrid from '../components/product/ProductGrid';
 import Button from '../components/common/Button';
+import HeroCarousel from '../components/common/HeroCarousel';
 import { FaShoppingBag, FaTruck, FaLock, FaHeadset } from 'react-icons/fa';
 
 const Home = () => {
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetchFeaturedProducts();
-  }, []);
 
   const fetchFeaturedProducts = async () => {
     try {
@@ -25,31 +22,14 @@ const Home = () => {
     }
   };
 
+  useEffect(() => {
+    fetchFeaturedProducts();
+  }, []);
+
   return (
     <div className="min-h-screen">
-      {/* Hero Section */}
-      <section className="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-20">
-        <div className="container mx-auto px-4 text-center">
-          <h1 className="text-5xl md:text-6xl font-bold mb-6">
-            Welcome to ShopHub
-          </h1>
-          <p className="text-xl md:text-2xl mb-8 max-w-3xl mx-auto">
-            Discover amazing products at unbeatable prices. Shop with confidence and enjoy fast, free shipping!
-          </p>
-          <div className="flex justify-center space-x-4">
-            <Link to="/products">
-              <Button variant="primary" size="lg" className="bg-white text-blue-600 hover:bg-gray-100">
-                Shop Now
-              </Button>
-            </Link>
-            <Link to="/contact">
-              <Button variant="outline" size="lg" className="border-white text-white hover:bg-white hover:text-blue-600">
-                Contact Us
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </section>
+      {/* Hero Carousel */}
+      <HeroCarousel />
 
       {/* Features Section */}
       <section className="py-16 bg-gray-50">

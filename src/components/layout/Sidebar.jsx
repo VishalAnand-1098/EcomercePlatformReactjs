@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { MdDashboard, MdShoppingBag, MdReceipt, MdMessage } from 'react-icons/md';
+import { MdDashboard, MdShoppingBag, MdReceipt, MdCategory } from 'react-icons/md';
 
 const Sidebar = () => {
   const location = useLocation();
@@ -7,6 +7,7 @@ const Sidebar = () => {
   const menuItems = [
     { path: '/admin', label: 'Dashboard', icon: MdDashboard },
     { path: '/admin/products', label: 'Manage Products', icon: MdShoppingBag },
+    { path: '/admin/categories', label: 'Manage Categories', icon: MdCategory },
     { path: '/admin/orders', label: 'Manage Orders', icon: MdReceipt },
   ];
 

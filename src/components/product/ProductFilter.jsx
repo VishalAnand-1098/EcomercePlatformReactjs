@@ -11,10 +11,6 @@ const ProductFilter = ({ onFilterChange, currentFilters }) => {
     sortOrder: currentFilters?.sortOrder || 'desc',
   });
 
-  useEffect(() => {
-    fetchCategories();
-  }, []);
-
   const fetchCategories = async () => {
     try {
       const data = await getAllCategories();
@@ -23,6 +19,20 @@ const ProductFilter = ({ onFilterChange, currentFilters }) => {
       console.error('Error fetching categories:', error);
     }
   };
+
+  // Get parent categories (no parent_id)
+  const getParentCategories = () => {
+    return categories.filter(cat => !cat.parent_id);
+  };
+
+  // Get subcategories for a parent
+  const getSubcategories = (parentId) => {
+    return categories.filter(cat => cat.parent_id === parentId);
+  };
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -57,11 +67,19 @@ const ProductFilter = ({ onFilterChange, currentFilters }) => {
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           <option value="">All Categories</option>
-          {categories.map((cat) => (
-            <option key={cat.id} value={cat.id}>
-              {cat.name}
-            </option>
-          ))}
+          {getParentCategories().map((parent) => {
+            const subcats = getSubcategories(parent.id);
+            return [
+              <option key={parent.id} value={parent.id}>
+                {parent.name}
+              </option>,
+              ...subcats.map((sub) => (
+                <option key={sub.id} value={sub.id}>
+                  &nbsp;&nbsp;↳ {sub.name}
+                </option>
+              ))
+            ];
+          })}
         </select>
       </div>
 

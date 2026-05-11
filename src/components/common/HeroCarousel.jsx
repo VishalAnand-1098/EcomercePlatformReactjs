@@ -1,52 +1,51 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import Button from './Button';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 
 const HeroCarousel = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
 
   const slides = [
-    {
-      id: 1,
-      title: 'Summer Sale Collection',
-      subtitle: 'Up to 50% OFF on selected items',
-      description: 'Discover amazing deals on fashion, electronics, and more!',
-      image: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1200&h=500&fit=crop',
-      buttonText: 'Shop Now',
-      buttonLink: '/products',
-      bgColor: 'from-rose-500 to-pink-600'
-    },
-    {
-      id: 2,
-      title: 'New Arrivals',
-      subtitle: 'Fresh styles just landed',
-      description: 'Be the first to grab the latest trends in fashion and lifestyle',
-      image: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=1200&h=500&fit=crop',
-      buttonText: 'Explore Now',
-      buttonLink: '/products',
-      bgColor: 'from-blue-500 to-indigo-600'
-    },
-    {
-      id: 3,
-      title: 'Electronics Mega Sale',
-      subtitle: 'Unbeatable prices on gadgets',
-      description: 'Smart devices, laptops, and accessories at incredible discounts',
-      image: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=1200&h=500&fit=crop',
-      buttonText: 'Shop Electronics',
-      buttonLink: '/products',
-      bgColor: 'from-purple-500 to-blue-600'
-    },
-    {
-      id: 4,
-      title: 'Gift Ideas',
-      subtitle: 'Perfect presents for everyone',
-      description: 'Find thoughtful gifts for your loved ones',
-      image: 'https://images.unsplash.com/photo-1513885535751-8b9238bd345a?w=1200&h=500&fit=crop',
-      buttonText: 'Find Gifts',
-      buttonLink: '/products',
-      bgColor: 'from-amber-500 to-orange-600'
-    }
+  {
+  id: 1,
+  title: 'Delicious Cake Collection',
+  subtitle: 'Up to 40% OFF on Special Cakes',
+  description: 'Order fresh birthday cakes, anniversary cakes, and designer cakes for every celebration!',
+  image: 'images/cake.png',
+  buttonText: 'Order Cake',
+  buttonLink: '/cakes',
+  bgColor: 'from-pink-500 to-rose-600'
+},
+{
+  id: 2,
+  title: 'Fresh Flower Bouquets',
+  subtitle: 'Beautiful flowers for every occasion',
+  description: 'Surprise your loved ones with roses, lilies, orchids, and premium flower arrangements.',
+  image: 'images/flower.jpg',
+  buttonText: 'Shop Flowers',
+  buttonLink: '/flowers',
+  bgColor: 'from-purple-500 to-fuchsia-600'
+}
+    // {
+    //   id: 3,
+    //   title: 'Electronics Mega Sale',
+    //   subtitle: 'Unbeatable prices on gadgets',
+    //   description: 'Smart devices, laptops, and accessories at incredible discounts',
+    //   image: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=1200&h=500&fit=crop',
+    //   buttonText: 'Shop Electronics',
+    //   buttonLink: '/products',
+    //   bgColor: 'from-purple-500 to-blue-600'
+    // },
+    // {
+    //   id: 4,
+    //   title: 'Gift Ideas',
+    //   subtitle: 'Perfect presents for everyone',
+    //   description: 'Find thoughtful gifts for your loved ones',
+    //   image: 'https://images.unsplash.com/photo-1513885535751-8b9238bd345a?w=1200&h=500&fit=crop',
+    //   buttonText: 'Find Gifts',
+    //   buttonLink: '/products',
+    //   bgColor: 'from-amber-500 to-orange-600'
+    // }
   ];
 
   useEffect(() => {
@@ -105,14 +104,12 @@ const HeroCarousel = () => {
                   <p className="text-lg md:text-xl mb-8 animate-fadeInUp animation-delay-400">
                     {slide.description}
                   </p>
-                  <Link to={slide.buttonLink} className="animate-fadeInUp animation-delay-600">
-                    <Button 
-                      variant="primary" 
-                      size="lg" 
-                      className="bg-white text-blue-600 hover:bg-gray-100 font-semibold px-8 py-4 text-lg"
+                  <Link to={slide.buttonLink} className="animate-fadeInUp animation-delay-600 inline-block">
+                    <button 
+                      className="bg-gradient-to-r from-pink-500 to-rose-600 text-white font-bold text-lg px-12 py-4 rounded-full shadow-2xl hover:shadow-pink-500/50 hover:scale-110 transform transition-all duration-300 border-4 border-white uppercase tracking-wide"
                     >
                       {slide.buttonText}
-                    </Button>
+                    </button>
                   </Link>
                 </div>
               </div>

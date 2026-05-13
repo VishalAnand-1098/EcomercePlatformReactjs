@@ -224,7 +224,7 @@ const Checkout = () => {
                   <form onSubmit={handleContinueToPayment} className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <Input
-                        label="Full Name"
+                        label="Reciver Name"
                         name="fullName"
                         value={formData.fullName}
                         onChange={handleChange}
@@ -343,7 +343,7 @@ const Checkout = () => {
                           </span>
                         </label> */}
 
-                        <label className={`flex items-center p-4 border-2 rounded-lg cursor-pointer transition-all ${paymentMethod === 'cod' ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-gray-300'}`}>
+                        {/* <label className={`flex items-center p-4 border-2 rounded-lg cursor-pointer transition-all ${paymentMethod === 'cod' ? 'border-blue-600 bg-blue-50' : 'border-gray-200 hover:border-gray-300'}`}>
                           <input
                             type="radio"
                             name="paymentMethod"
@@ -358,7 +358,7 @@ const Checkout = () => {
                             </svg>
                             <span className="font-medium">Cash on Delivery</span>
                           </span>
-                        </label>
+                        </label> */}
                       </div>
                     </div>
 

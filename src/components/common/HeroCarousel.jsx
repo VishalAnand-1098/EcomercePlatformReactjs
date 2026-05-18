@@ -14,7 +14,7 @@ const HeroCarousel = () => {
   image: 'images/cake.png',
   buttonText: 'Order Cake',
   buttonLink: '/cakes',
-  bgColor: 'from-pink-500 to-rose-600'
+  // bgColor: 'from-pink-500 to-rose-600'
 },
 {
   id: 2,
@@ -24,7 +24,7 @@ const HeroCarousel = () => {
   image: 'images/flower.jpg',
   buttonText: 'Shop Flowers',
   buttonLink: '/flowers',
-  bgColor: 'from-purple-500 to-fuchsia-600'
+  // bgColor: 'from-purple-500 to-fuchsia-600'
 }
     // {
     //   id: 3,
@@ -95,13 +95,13 @@ const HeroCarousel = () => {
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="container mx-auto px-4">
                 <div className="max-w-3xl text-white text-center">
-                  <h2 className="text-5xl md:text-6xl font-bold mb-4 animate-fadeInUp">
+                  <h2 className="text-5xl md:text-6xl font-bold mb-4 animate-fadeInUp text-white drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)]">
                     {slide.title}
                   </h2>
-                  <p className="text-2xl md:text-3xl mb-3 animate-fadeInUp animation-delay-200">
+                  <p className="text-2xl md:text-3xl mb-3 animate-fadeInUp animation-delay-200 text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.8)]">
                     {slide.subtitle}
                   </p>
-                  <p className="text-lg md:text-xl mb-8 animate-fadeInUp animation-delay-400">
+                  <p className="text-lg md:text-xl mb-8 animate-fadeInUp animation-delay-400 text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.7)]">
                     {slide.description}
                   </p>
                   <Link to={slide.buttonLink} className="animate-fadeInUp animation-delay-600 inline-block">

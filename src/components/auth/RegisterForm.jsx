@@ -9,6 +9,7 @@ const RegisterForm = () => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
+    phone: '',
     password: '',
     confirmPassword: '',
   });
@@ -39,6 +40,12 @@ const RegisterForm = () => {
       newErrors.email = 'Invalid email format';
     }
 
+    if (!formData.phone.trim()) {
+      newErrors.phone = 'Phone number is required';
+    } else if (!/^[0-9]{10}$/.test(formData.phone.replace(/[\s-]/g, ''))) {
+      newErrors.phone = 'Please enter a valid 10-digit phone number';
+    }
+
     if (!formData.password) {
       newErrors.password = 'Password is required';
     } else {
@@ -64,7 +71,7 @@ const RegisterForm = () => {
     if (!validate()) return;
 
     setLoading(true);
-    const result = await registerUser(formData.name, formData.email, formData.password);
+    const result = await registerUser(formData.name, formData.email, formData.phone, formData.password);
     setLoading(false);
 
     if (result.success) {
@@ -93,6 +100,17 @@ const RegisterForm = () => {
         onChange={handleChange}
         error={errors.email}
         placeholder="Enter your email"
+        required
+      />
+
+      <Input
+        label="Phone Number"
+        type="tel"
+        name="phone"
+        value={formData.phone}
+        onChange={handleChange}
+        error={errors.phone}
+        placeholder="Enter your 10-digit phone number"
         required
       />
 

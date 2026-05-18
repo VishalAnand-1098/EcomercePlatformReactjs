@@ -17,11 +17,11 @@ const Checkout = () => {
   const [loading, setLoading] = useState(false);
   const [currentStep, setCurrentStep] = useState(1); // 1: Shipping, 2: Payment
   const [formData, setFormData] = useState({
-    fullName: user?.name || '',
-    email: user?.email || '',
-    phone: '',
+    receiverName: '',
+    receiverPhone: '',
     address: '',
     city: '',
+    state: '',
     zipCode: '',
     country: '',
   });
@@ -87,7 +87,7 @@ const Checkout = () => {
     e.preventDefault();
     
     // Validate shipping information
-    const requiredFields = ['fullName', 'email', 'phone', 'address', 'city', 'zipCode', 'country'];
+    const requiredFields = ['receiverName', 'receiverPhone', 'address', 'city', 'state', 'zipCode', 'country'];
     const isValid = requiredFields.every(field => formData[field].trim() !== '');
     
     if (isValid) {
@@ -119,19 +119,21 @@ const Checkout = () => {
         const orderData = {
           amount: total,
           currency: 'INR',
-          customerName: formData.fullName,
-          customerEmail: formData.email,
-          customerPhone: formData.phone,
-          shippingAddress: `${formData.address}, ${formData.city}, ${formData.zipCode}, ${formData.country}`,
+          customerName: user.name,  // Use user's name from database
+          customerEmail: user.email,  // Use user's email from database
+          customerPhone: user.phone || formData.receiverPhone,  // Use user's phone from database, fallback to receiver phone
+          shippingAddress: `${formData.address}, ${formData.city}, ${formData.state}, ${formData.zipCode}, ${formData.country}`,
         };
 
         initiateRazorpayPayment(
           orderData,
           async (paymentResponse) => {
             // Payment successful
+            console.log('Payment successful:', paymentResponse);
             try {
               // Create order with payment details
-              await createOrder(user.id, cartItems, total, {
+              console.log('Creating order...');
+              const order = await createOrder(user.id, cartItems, total, {
                 paymentMethod: 'card',
                 coupon: appliedCoupon,
                 shippingInfo: formData,
@@ -142,14 +144,27 @@ const Checkout = () => {
                 },
               });
 
+              console.log('Order created:', order);
+
+              if (!order || !order.id) {
+                throw new Error('Order creation failed - no order ID returned');
+              }
+
               // Clear cart
+              console.log('Clearing cart...');
               await clearCart();
 
-              toast.success('Payment successful! Order placed.');
-              navigate('/dashboard');
+              // Show success message
+              toast.success('Payment successful! Redirecting...');
+              
+              // Small delay to ensure state updates
+              setTimeout(() => {
+                console.log('Navigating to order success page:', order.id);
+                navigate(`/order-success/${order.id}`, { replace: true });
+              }, 100);
             } catch (error) {
+              console.error('Error after payment:', error);
               toast.error(error.message || 'Failed to create order');
-            } finally {
               setLoading(false);
             }
           },
@@ -161,17 +176,31 @@ const Checkout = () => {
         );
       } else {
         // For COD and PayPal, create order directly
-        await createOrder(user.id, cartItems, total, {
+        console.log('Creating order with other payment method...');
+        const order = await createOrder(user.id, cartItems, total, {
           paymentMethod,
           coupon: appliedCoupon,
           shippingInfo: formData,
         });
 
+        console.log('Order created:', order);
+
+        if (!order || !order.id) {
+          throw new Error('Order creation failed - no order ID returned');
+        }
+
         // Clear cart
+        console.log('Clearing cart...');
         await clearCart();
 
-        toast.success('Order placed successfully!');
-        navigate('/dashboard');
+        toast.success('Order placed successfully! Redirecting...');
+        
+        // Navigate to success page
+        setTimeout(() => {
+          console.log('Navigating to order success page:', order.id);
+          navigate(`/order-success/${order.id}`, { replace: true });
+        }, 100);
+        
         setLoading(false);
       }
     } catch (error) {
@@ -219,36 +248,32 @@ const Checkout = () => {
             <div className="bg-white rounded-lg shadow-md p-8">
               {currentStep === 1 ? (
                 <>
-                  <h2 className="text-2xl font-semibold mb-6">Shipping Information</h2>
+                  <h2 className="text-2xl font-semibold mb-2">Shipping Information</h2>
+                  <p className="text-sm text-gray-600 mb-6">
+                    Enter the delivery address and receiver details. Your billing information will be taken from your account.
+                  </p>
                   
                   <form onSubmit={handleContinueToPayment} className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <Input
-                        label="Reciver Name"
-                        name="fullName"
-                        value={formData.fullName}
+                        label="Receiver Name"
+                        name="receiverName"
+                        value={formData.receiverName}
                         onChange={handleChange}
+                        placeholder="Name of person receiving the order"
                         required
                       />
                       
                       <Input
-                        label="Email"
-                        type="email"
-                        name="email"
-                        value={formData.email}
+                        label="Receiver Phone Number"
+                        type="tel"
+                        name="receiverPhone"
+                        value={formData.receiverPhone}
                         onChange={handleChange}
+                        placeholder="Contact number for delivery"
                         required
                       />
                     </div>
-
-                    <Input
-                      label="Phone Number"
-                      type="tel"
-                      name="phone"
-                      value={formData.phone}
-                      onChange={handleChange}
-                      required
-                    />
 
                     <Input
                       label="Address"
@@ -258,7 +283,7 @@ const Checkout = () => {
                       required
                     />
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <Input
                         label="City"
                         name="city"
@@ -267,6 +292,16 @@ const Checkout = () => {
                         required
                       />
                       
+                      <Input
+                        label="State"
+                        name="state"
+                        value={formData.state}
+                        onChange={handleChange}
+                        required
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <Input
                         label="ZIP Code"
                         name="zipCode"

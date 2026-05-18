@@ -7,10 +7,11 @@ import { isValidEmail } from '../utils/validators.js';
  * Register a new user
  * @param {string} name
  * @param {string} email
+ * @param {string} phone
  * @param {string} password
  * @returns {Promise<{user, token}>}
  */
-export const register = async (name, email, password) => {
+export const register = async (name, email, phone, password) => {
   try {
     // Validate email format
     if (!isValidEmail(email)) {
@@ -38,6 +39,7 @@ export const register = async (name, email, password) => {
         {
           name,
           email,
+          phone,
           password: hashedPassword,
           role: 'user',
         },

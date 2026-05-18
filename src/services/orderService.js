@@ -45,11 +45,12 @@ export const createOrder = async (userId, items, totalAmount, orderDetails = {})
           payment_method: paymentMethod || 'card',
           payment_status: paymentMethod === 'cod' ? 'pending' : 'paid',
           status: 'pending',
-          shipping_name: shippingInfo?.fullName || null,
+          shipping_name: shippingInfo?.receiverName || shippingInfo?.fullName || null,
           shipping_email: shippingInfo?.email || null,
-          shipping_phone: shippingInfo?.phone || null,
+          shipping_phone: shippingInfo?.receiverPhone || shippingInfo?.phone || null,
           shipping_address: shippingInfo?.address || null,
           shipping_city: shippingInfo?.city || null,
+          shipping_state: shippingInfo?.state || null,
           shipping_zipcode: shippingInfo?.zipCode || null,
           shipping_country: shippingInfo?.country || null,
         },
@@ -145,7 +146,8 @@ export const getOrderDetails = async (orderId) => {
         *,
         ecommerce_users (
           name,
-          email
+          email,
+          phone
         )
       `)
       .eq('id', orderId)
@@ -192,7 +194,8 @@ export const getAllOrders = async (options = {}) => {
         *,
         ecommerce_users (
           name,
-          email
+          email,
+          phone
         )
       `, { count: 'exact' });
 

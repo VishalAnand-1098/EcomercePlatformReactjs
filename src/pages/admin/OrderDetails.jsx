@@ -163,32 +163,52 @@ const OrderDetails = () => {
               </div>
             </div>
 
-            {/* Customer Information */}
+            {/* Customer Information (Account Holder) */}
             <div className="bg-white rounded-lg shadow-md p-6">
               <h2 className="text-xl font-semibold mb-4 flex items-center">
                 <FaUser className="mr-2 text-blue-600" />
-                Customer Information
+                Customer Information (Account Holder)
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <p className="text-sm text-gray-500">Name</p>
-                  <p className="font-semibold">{order.shipping_name || order.ecommerce_users?.name || 'N/A'}</p>
+                  <p className="text-sm text-gray-500">Customer Name</p>
+                  <p className="font-semibold">{order.ecommerce_users?.name || 'N/A'}</p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-500 flex items-center">
                     <FaEnvelope className="mr-1" /> Email
                   </p>
-                  <p className="font-semibold">{order.shipping_email || order.ecommerce_users?.email || 'N/A'}</p>
+                  <p className="font-semibold">{order.ecommerce_users?.email || 'N/A'}</p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-500 flex items-center">
-                    <FaPhone className="mr-1" /> Phone
+                    <FaPhone className="mr-1" /> Customer Phone
                   </p>
-                  <p className="font-semibold">{order.shipping_phone || 'N/A'}</p>
+                  <p className="font-semibold">{order.ecommerce_users?.phone || 'N/A'}</p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-500">Order Date</p>
                   <p className="font-semibold">{formatDateTime(order.created_at)}</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Receiver/Delivery Information */}
+            <div className="bg-white rounded-lg shadow-md p-6">
+              <h2 className="text-xl font-semibold mb-4 flex items-center">
+                <FaMapMarkerAlt className="mr-2 text-green-600" />
+                Receiver/Delivery Information
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm text-gray-500">Receiver Name</p>
+                  <p className="font-semibold">{order.shipping_name || 'N/A'}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500 flex items-center">
+                    <FaPhone className="mr-1" /> Receiver Phone
+                  </p>
+                  <p className="font-semibold">{order.shipping_phone || 'N/A'}</p>
                 </div>
               </div>
             </div>
@@ -202,8 +222,9 @@ const OrderDetails = () => {
               <div className="space-y-2">
                 <p className="font-medium">{order.shipping_address || 'N/A'}</p>
                 <p className="text-gray-600">
-                  {order.shipping_city && `${order.shipping_city}, `}
-                  {order.shipping_zipcode && `${order.shipping_zipcode}`}
+                  {order.shipping_city && `${order.shipping_city}`}
+                  {order.shipping_state && `, ${order.shipping_state}`}
+                  {order.shipping_zipcode && ` ${order.shipping_zipcode}`}
                 </p>
                 <p className="text-gray-600">{order.shipping_country || 'N/A'}</p>
               </div>

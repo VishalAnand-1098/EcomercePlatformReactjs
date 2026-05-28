@@ -6,6 +6,7 @@ import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
 import AppRoutes from './routes/AppRoutes';
 import './App.css';
+import SEO from './components/common/SEO';
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
       <AuthProvider>
         <CartProvider>
           <div className="flex flex-col min-h-screen">
+            <SEO />
             <Header />
             <main className="flex-grow">
               <AppRoutes />

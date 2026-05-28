@@ -74,9 +74,9 @@ const Header = () => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16 border-b border-gray-200">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2">
-            <FaBox className="text-blue-600 text-3xl" />
-            <span className="text-2xl font-bold text-gray-900">ShopHub</span>
+          <Link to="/" className="flex items-center space-x-3">
+            <img src="/images/giftbhejo.jpeg" alt="GiftsBhejo" className="h-20 w-auto" loading="lazy" />
+            {/* <span className="text-2xl font-bold text-gray-900">GiftsBhejo</span> */}
           </Link>
 
           {/* Desktop Navigation - Right Side */}

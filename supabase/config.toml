@@ -1,8 +1,4 @@
-# Supabase project configuration
-# Generated for GiftsBhejo — project ref: ilqxzascpujmbujzewan
 
-[project]
-project_id = "ilqxzascpujmbujzewan"
 
 [api]
 enabled = true

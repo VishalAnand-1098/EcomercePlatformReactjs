@@ -28,13 +28,14 @@ function verifyAuth(req) {
 
 async function sendWithResend({ to, subject, html, text }) {
   const apiKey = process.env.RESEND_API_KEY;
-  const from = process.env.RESEND_FROM_EMAIL || 'GiftsBhejo <onboarding@resend.dev>';
+  // Strip surrounding quotes that some env parsers may leave
+  const from = (process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev').replace(/^["']|["']$/g, '');
 
   if (!apiKey) {
     throw new Error('RESEND_API_KEY is not configured');
   }
 
-  console.log('Sending email to:', to);
+  console.log('Sending email — from:', from, '— to:', to);
 
   const resend = new Resend(apiKey);
   const { data, error } = await resend.emails.send({
@@ -45,9 +46,12 @@ async function sendWithResend({ to, subject, html, text }) {
     text,
   });
 
-  if (error) throw error;
+  if (error) {
+    console.error('Resend error details:', JSON.stringify(error));
+    throw new Error(error.message || JSON.stringify(error));
+  }
 
-  console.log('Email sent successfully', data?.id ? `(id: ${data.id})` : '');
+  console.log('Email sent successfully — Resend id:', data?.id);
   return data;
 }
 

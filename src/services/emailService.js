@@ -6,7 +6,8 @@ function getSiteUrl() {
     (typeof window !== 'undefined' ? window.location.origin : '')
   );
 }
-
+console.log("API_SECRET =", API_SECRET);
+console.log("All ENV =", import.meta.env);
 async function sendEmail(type, payload = {}) {
   const body = {
     type,

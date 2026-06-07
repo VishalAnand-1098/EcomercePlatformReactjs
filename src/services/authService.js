@@ -19,15 +19,19 @@ export const register = async (name, email, phone, password) => {
     }
 
     // Check if user already exists
-    const { data: existingUser } = await supabase
-      .from('ecommerce_users')
-      .select('id')
-      .eq('email', email)
-      .single();
-
-    if (existingUser) {
-      throw new Error('User with this email already exists');
-    }
+    const { data: existingUser, error: checkError } = await supabase
+    .from('ecommerce_users')
+    .select('id')
+    .eq('email', email)
+    .maybeSingle();
+  
+  if (checkError) {
+    throw checkError;
+  }
+  
+  if (existingUser) {
+    throw new Error('User with this email already exists');
+  }
 
     // Hash password
     const hashedPassword = await hashPassword(password);

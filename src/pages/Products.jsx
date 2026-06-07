@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { getAllProducts } from '../services/productService';
+import { getAllCategories } from '../services/categoryService';
 import ProductGrid from '../components/product/ProductGrid';
 import ProductFilter from '../components/product/ProductFilter';
 import ProductSearch from '../components/product/ProductSearch';
@@ -24,8 +25,20 @@ const Products = () => {
   // Read category from URL parameter
   useEffect(() => {
     const categoryFromUrl = searchParams.get('category');
+    const categoryNameFromUrl = searchParams.get('categoryName');
+
     if (categoryFromUrl) {
       setFilters(prev => ({ ...prev, category: categoryFromUrl }));
+    } else if (categoryNameFromUrl) {
+      // Look up category ID by name (case-insensitive)
+      getAllCategories().then(categories => {
+        const match = categories.find(
+          cat => cat.name.toLowerCase() === categoryNameFromUrl.toLowerCase()
+        );
+        if (match) {
+          setFilters(prev => ({ ...prev, category: match.id }));
+        }
+      }).catch(() => {});
     }
   }, [searchParams]);
 

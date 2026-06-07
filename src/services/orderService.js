@@ -1,5 +1,10 @@
 import { supabase } from './supabaseClient.js';
 import { incrementCouponUsage } from './couponService.js';
+import {
+  sendOrderPlacedEmail,
+  sendOrderShippedEmail,
+  sendOrderDeliveredEmail,
+} from './emailService.js';
 
 /**
  * Create a new order
@@ -105,6 +110,10 @@ export const createOrder = async (userId, items, totalAmount, orderDetails = {})
     if (coupon?.id) {
       await incrementCouponUsage(coupon.id);
     }
+
+    sendOrderPlacedEmail(order.id).catch((err) => {
+      console.error('Order confirmation email failed:', err);
+    });
 
     return order;
   } catch (error) {
@@ -240,6 +249,16 @@ export const updateOrderStatus = async (orderId, status) => {
       .single();
 
     if (error) throw error;
+
+    if (status === 'shipped') {
+      sendOrderShippedEmail(orderId).catch((err) => {
+        console.error('Order shipped email failed:', err);
+      });
+    } else if (status === 'delivered') {
+      sendOrderDeliveredEmail(orderId).catch((err) => {
+        console.error('Order delivered email failed:', err);
+      });
+    }
 
     return data;
   } catch (error) {

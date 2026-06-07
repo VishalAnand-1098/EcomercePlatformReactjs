@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 
 const HeroCarousel = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const navigate = useNavigate();
 
   const slides = [
   {
@@ -13,8 +14,7 @@ const HeroCarousel = () => {
   description: 'Order fresh birthday cakes, anniversary cakes, and designer cakes for every celebration!',
   image: 'images/cake.png',
   buttonText: 'Order Cake',
-  buttonLink: '/cakes',
-  // bgColor: 'from-pink-500 to-rose-600'
+  buttonLink: '/products?categoryName=CAKE',
 },
 {
   id: 2,
@@ -23,8 +23,7 @@ const HeroCarousel = () => {
   description: 'Surprise your loved ones with roses, lilies, orchids, and premium flower arrangements.',
   image: 'images/flower.jpg',
   buttonText: 'Shop Flowers',
-  buttonLink: '/flowers',
-  // bgColor: 'from-purple-500 to-fuchsia-600'
+  buttonLink: '/products?categoryName=FLOWER',
 }
     // {
     //   id: 3,
@@ -74,25 +73,27 @@ const HeroCarousel = () => {
       {slides.map((slide, index) => (
         <div
           key={slide.id}
-          className={`absolute inset-0 transition-all duration-700 ease-in-out ${
+          className={`absolute inset-0 transition-all duration-700 ease-in-out cursor-pointer ${
             index === currentSlide 
               ? 'opacity-100 translate-x-0' 
               : index < currentSlide 
                 ? 'opacity-0 -translate-x-full' 
                 : 'opacity-0 translate-x-full'
           }`}
+          onClick={() => navigate(slide.buttonLink)}
+          role="link"
+          aria-label={slide.title}
         >
           {/* Background Image with Overlay */}
           <div className="relative w-full h-full">
-            <div className={`absolute inset-0 bg-gradient-to-r ${slide.bgColor} opacity-90`}></div>
             <img
               src={slide.image}
               alt={slide.title}
-              className="w-full h-full object-cover mix-blend-multiply"
+              className="w-full h-full object-cover"
             />
             
             {/* Content */}
-            <div className="absolute inset-0 flex items-center justify-center">
+            <div className="absolute inset-0 flex items-center justify-center bg-black/30">
               <div className="container mx-auto px-4">
                 <div className="max-w-3xl text-white text-center">
                   <h2 className="text-5xl md:text-6xl font-bold mb-4 animate-fadeInUp text-white drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)]">
@@ -104,13 +105,12 @@ const HeroCarousel = () => {
                   <p className="text-lg md:text-xl mb-8 animate-fadeInUp animation-delay-400 text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.7)]">
                     {slide.description}
                   </p>
-                  <Link to={slide.buttonLink} className="animate-fadeInUp animation-delay-600 inline-block">
-                    <button 
-                      className="bg-gradient-to-r from-pink-500 to-rose-600 text-white font-bold text-lg px-12 py-4 rounded-full shadow-2xl hover:shadow-pink-500/50 hover:scale-110 transform transition-all duration-300 border-4 border-white uppercase tracking-wide"
-                    >
-                      {slide.buttonText}
-                    </button>
-                  </Link>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); navigate(slide.buttonLink); }}
+                    className="animate-fadeInUp animation-delay-600 bg-gradient-to-r from-pink-500 to-rose-600 text-white font-bold text-lg px-12 py-4 rounded-full shadow-2xl hover:shadow-pink-500/50 hover:scale-110 transform transition-all duration-300 border-4 border-white uppercase tracking-wide"
+                  >
+                    {slide.buttonText}
+                  </button>
                 </div>
               </div>
             </div>
@@ -120,26 +120,26 @@ const HeroCarousel = () => {
 
       {/* Navigation Arrows */}
       <button
-        onClick={goToPrevious}
-        className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/30 hover:bg-white/50 text-white p-3 rounded-full backdrop-blur-sm transition-all opacity-0 group-hover:opacity-100"
+        onClick={(e) => { e.stopPropagation(); goToPrevious(); }}
+        className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/30 hover:bg-white/50 text-white p-3 rounded-full backdrop-blur-sm transition-all opacity-0 group-hover:opacity-100 z-10"
         aria-label="Previous slide"
       >
         <FaChevronLeft size={24} />
       </button>
       <button
-        onClick={goToNext}
-        className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/30 hover:bg-white/50 text-white p-3 rounded-full backdrop-blur-sm transition-all opacity-0 group-hover:opacity-100"
+        onClick={(e) => { e.stopPropagation(); goToNext(); }}
+        className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/30 hover:bg-white/50 text-white p-3 rounded-full backdrop-blur-sm transition-all opacity-0 group-hover:opacity-100 z-10"
         aria-label="Next slide"
       >
         <FaChevronRight size={24} />
       </button>
 
       {/* Dots Indicator */}
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex space-x-3">
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex space-x-3 z-10">
         {slides.map((_, index) => (
           <button
             key={index}
-            onClick={() => goToSlide(index)}
+            onClick={(e) => { e.stopPropagation(); goToSlide(index); }}
             className={`transition-all ${
               index === currentSlide
                 ? 'w-12 bg-white'

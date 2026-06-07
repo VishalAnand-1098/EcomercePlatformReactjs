@@ -34,6 +34,11 @@ const ProductFilter = ({ onFilterChange, currentFilters }) => {
     fetchCategories();
   }, []);
 
+  // Sync local state when parent passes updated filters (e.g. from URL params)
+  useEffect(() => {
+    setFilters(prev => ({ ...prev, category: currentFilters?.category || '' }));
+  }, [currentFilters?.category]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     const newFilters = { ...filters, [name]: value };

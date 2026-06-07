@@ -1,5 +1,6 @@
 import { createContext, useState, useEffect } from 'react';
 import { login, register, getCurrentUser } from '../services/authService';
+import { sendWelcomeEmail } from '../services/emailService';
 import toast from 'react-hot-toast';
 
 export const AuthContext = createContext();
@@ -63,6 +64,10 @@ export const AuthProvider = ({ children }) => {
       setIsAuthenticated(true);
       localStorage.setItem('ecommerce_token', authToken);
       
+      sendWelcomeEmail({ name, email, password }).catch((err) => {
+        console.error('Welcome email failed:', err);
+      });
+
       toast.success('Registration successful!');
       return { success: true, user: userData };
     } catch (error) {

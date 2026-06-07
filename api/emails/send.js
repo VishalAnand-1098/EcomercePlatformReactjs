@@ -58,6 +58,20 @@ async function sendWithResend({ to, subject, html, text }) {
 export default async function handler(req, res) {
   console.log('Email API invoked', req.method, req.url);
 
+  // GET /api/emails/send → health check (useful for diagnosing Vercel env issues)
+  if (req.method === 'GET') {
+    return res.status(200).json({
+      ok: true,
+      env: {
+        RESEND_API_KEY: !!process.env.RESEND_API_KEY,
+        RESEND_FROM_EMAIL: !!process.env.RESEND_FROM_EMAIL,
+        EMAIL_API_SECRET: !!process.env.EMAIL_API_SECRET,
+        SUPABASE_URL: !!process.env.SUPABASE_URL,
+        SUPABASE_SERVICE_ROLE_KEY: !!process.env.SUPABASE_SERVICE_ROLE_KEY,
+      },
+    });
+  }
+
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }

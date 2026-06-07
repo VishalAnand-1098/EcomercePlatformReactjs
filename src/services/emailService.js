@@ -8,31 +8,47 @@ function getSiteUrl() {
 }
 
 async function sendEmail(type, payload = {}) {
+  const body = {
+    type,
+    siteUrl: getSiteUrl(),
+    ...payload,
+  };
+
   if (!API_SECRET) {
-    console.warn('VITE_EMAIL_API_SECRET is not configured — skipping email');
-    return { success: false, skipped: true };
+    console.error(
+      'VITE_EMAIL_API_SECRET is not set — email API will not authenticate. ' +
+        'Add VITE_EMAIL_API_SECRET to .env (local) and Vercel env vars (production).'
+    );
   }
+
+  console.log('Calling email API...', { type, url: '/api/emails/send' });
 
   try {
     const response = await fetch('/api/emails/send', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${API_SECRET}`,
+        Authorization: API_SECRET || '',
       },
-      body: JSON.stringify({
-        type,
-        siteUrl: getSiteUrl(),
-        ...payload,
-      }),
+      body: JSON.stringify(body),
     });
 
+    console.log('Email API response status:', response.status);
+
+    const responseText = await response.text();
+    let data;
+    try {
+      data = JSON.parse(responseText);
+    } catch {
+      data = { error: responseText };
+    }
+    console.log('Email API response body:', data);
+
     if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(errorText || `Email API error (${response.status})`);
+      throw new Error(data?.error || `Email API error (${response.status})`);
     }
 
-    return await response.json();
+    return { success: true, ...data };
   } catch (error) {
     console.error(`Failed to send ${type} email:`, error);
     return { success: false, error: error.message };

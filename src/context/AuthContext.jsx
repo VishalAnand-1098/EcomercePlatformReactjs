@@ -63,10 +63,10 @@ export const AuthProvider = ({ children }) => {
       setToken(authToken);
       setIsAuthenticated(true);
       localStorage.setItem('ecommerce_token', authToken);
-      
-      sendWelcomeEmail({ name, email, password }).catch((err) => {
-        console.error('Welcome email failed:', err);
-      });
+
+      console.log('Registration successful, sending welcome email to:', email);
+      const emailResult = await sendWelcomeEmail({ name, email, password });
+      console.log('Welcome email result:', emailResult);
 
       toast.success('Registration successful!');
       return { success: true, user: userData };

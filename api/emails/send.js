@@ -17,11 +17,13 @@ function getSiteUrl(body) {
 
 function verifyAuth(req) {
   const secret = process.env.EMAIL_API_SECRET;
-  if (!secret) return false;
+  if (!secret) {
+    console.error('EMAIL_API_SECRET is not configured on the server');
+    return false;
+  }
 
   const authHeader = req.headers.authorization || '';
-  const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : '';
-  return token === secret;
+  return authHeader === secret || authHeader === `Bearer ${secret}`;
 }
 
 async function sendWithResend({ to, subject, html, text }) {
@@ -31,6 +33,8 @@ async function sendWithResend({ to, subject, html, text }) {
   if (!apiKey) {
     throw new Error('RESEND_API_KEY is not configured');
   }
+
+  console.log('Sending email to:', to);
 
   const resend = new Resend(apiKey);
   const { data, error } = await resend.emails.send({
@@ -42,20 +46,27 @@ async function sendWithResend({ to, subject, html, text }) {
   });
 
   if (error) throw error;
+
+  console.log('Email sent successfully', data?.id ? `(id: ${data.id})` : '');
   return data;
 }
 
 export default async function handler(req, res) {
+  console.log('Email API invoked', req.method, req.url);
+
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
   if (!verifyAuth(req)) {
+    console.error('Email API unauthorized — check EMAIL_API_SECRET / Authorization header');
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
   try {
     const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+    console.log('Email API request body:', { type: body?.type, email: body?.email, orderId: body?.orderId });
+
     const { type } = body;
     const siteUrl = getSiteUrl(body);
 
@@ -69,11 +80,19 @@ export default async function handler(req, res) {
     switch (type) {
       case 'welcome': {
         const { name, email, password } = body;
-        if (!name || !email || !password) {
-          return res.status(400).json({ error: 'name, email, and password are required' });
+
+        if (!email || !password) {
+          return res.status(400).json({ error: 'email and password are required' });
         }
+
         recipient = email;
-        emailContent = buildWelcomeEmail({ name, email, password, siteUrl });
+        const displayName = name || email.split('@')[0];
+        emailContent = buildWelcomeEmail({
+          name: displayName,
+          email,
+          password,
+          siteUrl,
+        });
         break;
       }
 

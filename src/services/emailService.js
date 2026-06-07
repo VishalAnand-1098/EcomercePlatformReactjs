@@ -1,4 +1,7 @@
-const API_SECRET = import.meta.env.VITE_EMAIL_API_SECRET;
+// Calls the Supabase Edge Function `send-email`
+// Deployed at: https://<project>.supabase.co/functions/v1/send-email
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL ?? '';
+const EDGE_FN_URL  = `${SUPABASE_URL}/functions/v1/send-email`;
 
 function getSiteUrl() {
   return (
@@ -8,60 +11,46 @@ function getSiteUrl() {
 }
 
 async function sendEmail(type, payload = {}) {
-  const body = {
-    type,
-    siteUrl: getSiteUrl(),
-    ...payload,
-  };
-
-  if (!API_SECRET) {
-    console.error(
-      'VITE_EMAIL_API_SECRET is not set — email API will not authenticate. ' +
-        'Add VITE_EMAIL_API_SECRET to .env (local) and Vercel env vars (production).'
-    );
+  if (!SUPABASE_URL) {
+    console.error('VITE_SUPABASE_URL is not set — email API will not work.');
+    return { success: false, error: 'VITE_SUPABASE_URL is not configured' };
   }
 
-  console.log('Calling email API...', { type, url: '/api/emails/send' });
+  const body = { type, siteUrl: getSiteUrl(), ...payload };
+  console.log('Calling Edge Function…', { type, url: EDGE_FN_URL });
 
   try {
-    const response = await fetch('/api/emails/send', {
+    const response = await fetch(EDGE_FN_URL, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: API_SECRET || '',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
     });
 
-    console.log('Email API response status:', response.status);
+    console.log('Edge Function response status:', response.status);
 
-    const responseText = await response.text();
+    const text = await response.text();
     let data;
-    try {
-      data = JSON.parse(responseText);
-    } catch {
-      data = { error: responseText };
-    }
-    console.log('Email API response body:', data);
+    try { data = JSON.parse(text); } catch { data = { error: text }; }
+
+    console.log('Edge Function response body:', data);
 
     if (!response.ok) {
-      throw new Error(data?.error || `Email API error (${response.status})`);
+      throw new Error(data?.error ?? `Edge Function error (${response.status})`);
     }
-
     return { success: true, ...data };
-  } catch (error) {
-    console.error(`Failed to send ${type} email:`, error);
-    return { success: false, error: error.message };
+  } catch (err) {
+    console.error(`Failed to send ${type} email:`, err);
+    return { success: false, error: err.message };
   }
 }
 
-export const sendWelcomeEmail = ({ name, email, password }) =>
+export const sendWelcomeEmail      = ({ name, email, password }) =>
   sendEmail('welcome', { name, email, password });
 
-export const sendOrderPlacedEmail = (orderId) =>
+export const sendOrderPlacedEmail   = (orderId) =>
   sendEmail('order_placed', { orderId });
 
-export const sendOrderShippedEmail = (orderId) =>
+export const sendOrderShippedEmail  = (orderId) =>
   sendEmail('order_shipped', { orderId });
 
 export const sendOrderDeliveredEmail = (orderId) =>

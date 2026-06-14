@@ -7,6 +7,7 @@ import Footer from './components/layout/Footer';
 import AppRoutes from './routes/AppRoutes';
 import './App.css';
 import SEO from './components/common/SEO';
+import WhatsAppButton from './components/common/WhatsAppButton';
 
 function App() {
   return (
@@ -16,11 +17,12 @@ function App() {
           <div className="flex flex-col min-h-screen">
             <SEO />
             <Header />
-            <main className="flex-grow">
+            <main className="flex-grow w-full min-w-0 overflow-x-hidden">
               <AppRoutes />
             </main>
             <Footer />
           </div>
+          <WhatsAppButton />
           <Toaster
             position="top-right"
             toastOptions={{

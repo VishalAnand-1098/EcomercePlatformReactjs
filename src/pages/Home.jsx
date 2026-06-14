@@ -85,10 +85,14 @@ const Home = () => {
           <h2 className="text-4xl font-bold mb-4">Ready to Start Shopping?</h2>
           <p className="text-xl mb-8">Join thousands of satisfied customers</p>
           <Link to="/register">
-            <Button variant="primary" size="lg" className="bg-white text-blue-600 hover:bg-gray-100">
-              Create Account
-            </Button>
-          </Link>
+  <Button
+    variant="light"
+    size="lg"
+    className="px-5 py-3 fw-bold border border-secondary shadow"
+  >
+    Create Account
+  </Button>
+</Link>
         </div>
       </section>
     </div>

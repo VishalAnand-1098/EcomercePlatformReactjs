@@ -14,6 +14,9 @@ const ProductForm = ({ product, onSuccess, onCancel }) => {
     stock: product?.stock || '',
     category_id: product?.category_id || '',
     image_url: product?.image_url || '',
+    image_url_2: product?.image_url_2 || '',
+    image_url_3: product?.image_url_3 || '',
+    image_url_4: product?.image_url_4 || '',
     discount_percentage: product?.discount_percentage || 0,
   });
   const [categories, setCategories] = useState([]);
@@ -82,7 +85,7 @@ const ProductForm = ({ product, onSuccess, onCancel }) => {
         />
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Input
           label="Price (₹)"
           type="number"
@@ -135,14 +138,24 @@ const ProductForm = ({ product, onSuccess, onCancel }) => {
         </select>
       </div>
 
-      <Input
-        label="Image URL"
-        type="url"
-        name="image_url"
-        value={formData.image_url}
-        onChange={handleChange}
-        placeholder="https://example.com/image.jpg"
-      />
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Product Images (up to 4)
+        </label>
+        <div className="space-y-3">
+          {[1, 2, 3, 4].map((num) => (
+            <Input
+              key={num}
+              label={`Image URL ${num}${num === 1 ? ' (Primary)' : ''}`}
+              type="url"
+              name={num === 1 ? 'image_url' : `image_url_${num}`}
+              value={formData[num === 1 ? 'image_url' : `image_url_${num}`]}
+              onChange={handleChange}
+              placeholder="https://example.com/image.jpg"
+            />
+          ))}
+        </div>
+      </div>
 
       <div className="flex space-x-4">
         <Button type="submit" variant="primary" size="lg" loading={loading} className="flex-1">

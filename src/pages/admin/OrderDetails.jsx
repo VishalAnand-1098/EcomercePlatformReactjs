@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getOrderDetails, updateOrderStatus } from '../../services/orderService';
-import { formatPrice, formatDateTime, formatOrderStatus, getStatusColor } from '../../utils/formatters';
+import { formatPrice, formatDateTime, formatOrderStatus, getStatusColor, formatOrderId } from '../../utils/formatters';
 import Loader from '../../components/common/Loader';
 import Button from '../../components/common/Button';
 import toast from 'react-hot-toast';
@@ -79,7 +79,7 @@ const OrderDetails = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
-      <div className="container mx-auto px-4 max-w-7xl">
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
         {/* Header */}
         <div className="mb-6">
           <button
@@ -92,7 +92,7 @@ const OrderDetails = () => {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold text-gray-900">Order Details</h1>
-              <p className="text-gray-500 mt-1">Order ID: {order.id}</p>
+              <p className="text-gray-500 mt-1">Order ID: {formatOrderId(order.id)}</p>
             </div>
             <div>
               <span className={`px-4 py-2 rounded-full text-sm font-semibold ${getStatusColor(order.status)}`}>

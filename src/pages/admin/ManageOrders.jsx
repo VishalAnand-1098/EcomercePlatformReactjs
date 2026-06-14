@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { getAllOrders, updateOrderStatus } from '../../services/orderService';
-import { formatPrice, formatDateTime, formatOrderStatus, getStatusColor } from '../../utils/formatters';
+import { formatPrice, formatDateTime, formatOrderStatus, getStatusColor, formatOrderId } from '../../utils/formatters';
 import Loader from '../../components/common/Loader';
 import toast from 'react-hot-toast';
 import { FaEye } from 'react-icons/fa';
@@ -38,16 +38,15 @@ const ManageOrders = () => {
   };
 
   return (
-    <div className="flex">
-      <div className="flex-1 p-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">Manage Orders</h1>
+    <div className="flex-1 p-4 sm:p-8 min-w-0 w-full">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 sm:mb-8">Manage Orders</h1>
 
         {loading ? (
           <Loader />
         ) : (
           <div className="bg-white rounded-lg shadow-md overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="w-full">
+              <table className="w-full min-w-[800px]">
                 <thead className="bg-gray-50">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Order ID</th>
@@ -62,7 +61,7 @@ const ManageOrders = () => {
                 <tbody className="bg-white divide-y divide-gray-200">
                   {orders.map((order) => (
                     <tr key={order.id}>
-                      <td className="px-6 py-4 font-mono text-sm">{order.id.substring(0, 8)}...</td>
+                      <td className="px-4 sm:px-6 py-4 font-mono text-sm">{formatOrderId(order.id)}</td>
                       <td className="px-6 py-4">{order.ecommerce_users?.name}</td>
                       <td className="px-6 py-4 text-sm">{formatDateTime(order.created_at)}</td>
                       <td className="px-6 py-4 font-semibold">{formatPrice(order.total_amount)}</td>
@@ -83,7 +82,8 @@ const ManageOrders = () => {
                           <option value="delivered">Delivered</option>
                           <option value="cancelled">Cancelled</option>
                         </select>
-                      <td className="px-6 py-4">
+                      </td>
+                      <td className="px-4 sm:px-6 py-4">
                         <Link
                           to={`/admin/orders/${order.id}`}
                           className="inline-flex items-center px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
@@ -92,7 +92,6 @@ const ManageOrders = () => {
                           View Details
                         </Link>
                       </td>
-                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -100,7 +99,6 @@ const ManageOrders = () => {
             </div>
           </div>
         )}
-      </div>
     </div>
   );
 };

@@ -4,8 +4,10 @@ import { getProductById } from '../services/productService';
 import { useCart } from '../hooks/useCart';
 import { useAuth } from '../hooks/useAuth';
 import { formatPrice } from '../utils/formatters';
+import { getProductImages } from '../utils/productHelpers';
 import Button from '../components/common/Button';
 import Loader from '../components/common/Loader';
+import ProductImageGallery from '../components/product/ProductImageGallery';
 import { FaShoppingCart, FaMinus, FaPlus } from 'react-icons/fa';
 
 const ProductDetails = () => {
@@ -73,30 +75,28 @@ const ProductDetails = () => {
     : originalPrice;
   const hasDiscount = discountPercentage > 0;
 
+  const productImages = getProductImages(product);
+
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
-      <div className="container mx-auto px-4">
+    <div className="min-h-screen bg-gray-50 py-6 md:py-12">
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6">
         {/* Breadcrumb */}
-        <div className="mb-6 text-sm text-gray-600">
+        <div className="mb-4 md:mb-6 text-sm text-gray-600 truncate">
           <Link to="/" className="hover:text-blue-600">Home</Link> /
           <Link to="/products" className="hover:text-blue-600"> Products</Link> /
           <span className="text-gray-900"> {product.name}</span>
         </div>
 
-        <div className="bg-white rounded-lg shadow-md p-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Product Image */}
+        <div className="bg-white rounded-lg shadow-md p-4 sm:p-6 md:p-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+            {/* Product Images */}
             <div>
-              <img
-                src={product.image_url || 'https://via.placeholder.com/600'}
-                alt={product.name}
-                className="w-full h-auto rounded-lg shadow-md"
-              />
+              <ProductImageGallery images={productImages} productName={product.name} />
             </div>
 
             {/* Product Info */}
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-4">{product.name}</h1>
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">{product.name}</h1>
 
               {product.ecommerce_categories && (
                 <p className="text-gray-600 mb-4">

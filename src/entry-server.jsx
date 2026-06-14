@@ -7,6 +7,7 @@ import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
 import AppRoutes from './routes/AppRoutes';
 import SEO from './components/common/SEO';
+import WhatsAppButton from './components/common/WhatsAppButton';
 
 export function render(url) {
   const helmetContext = {};
@@ -24,6 +25,7 @@ export function render(url) {
               </main>
               <Footer />
             </div>
+            <WhatsAppButton />
           </CartProvider>
         </AuthProvider>
       </StaticRouter>

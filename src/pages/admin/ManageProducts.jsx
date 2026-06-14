@@ -59,10 +59,9 @@ const ManageProducts = () => {
   };
 
   return (
-    <div className="flex">
-      <div className="flex-1 p-8">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Manage Products</h1>
+    <div className="flex-1 p-4 sm:p-8 min-w-0 w-full">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Manage Products</h1>
           <Button
             variant="primary"
             onClick={() => setShowModal(true)}
@@ -78,7 +77,7 @@ const ManageProducts = () => {
         ) : (
           <div className="bg-white rounded-lg shadow-md overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="w-full">
+              <table className="w-full min-w-[700px]">
                 <thead className="bg-gray-50">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Image</th>
@@ -144,7 +143,6 @@ const ManageProducts = () => {
             onCancel={handleModalClose}
           />
         </Modal>
-      </div>
     </div>
   );
 };

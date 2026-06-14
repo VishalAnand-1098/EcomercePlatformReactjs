@@ -79,3 +79,14 @@ export const getStatusColor = (status) => {
   };
   return colorMap[status] || 'bg-gray-100 text-gray-800';
 };
+
+/**
+ * Format UUID order id to readable display id (e.g. Order_Id1234)
+ * @param {string} uuid
+ * @returns {string}
+ */
+export const formatOrderId = (uuid) => {
+  if (!uuid) return '';
+  const numeric = parseInt(uuid.replace(/-/g, '').slice(0, 8), 16) % 10000;
+  return `Order_Id${String(numeric).padStart(4, '0')}`;
+};

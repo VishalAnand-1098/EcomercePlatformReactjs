@@ -3,9 +3,8 @@ import AdminStats from '../../components/admin/AdminStats';
 
 const AdminDashboard = () => {
   return (
-    <div className="flex">
-      <div className="flex-1 p-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">Admin Dashboard</h1>
+    <div className="flex-1 p-4 sm:p-8 min-w-0 w-full">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 sm:mb-8">Admin Dashboard</h1>
 
         {/* Stats */}
         <AdminStats />
@@ -28,7 +27,6 @@ const AdminDashboard = () => {
             <p className="text-gray-600">View and update order statuses</p>
           </Link>
         </div>
-      </div>
     </div>
   );
 };

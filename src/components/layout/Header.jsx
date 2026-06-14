@@ -69,18 +69,22 @@ const Header = () => {
   };
 
   return (
-    <header className="bg-white shadow-md sticky top-0 z-50">
+    <header className="bg-white shadow-md sticky top-0 z-50 w-full">
       {/* Top Header */}
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16 border-b border-gray-200">
+      <div className="w-full max-w-7xl mx-auto px-3 sm:px-4">
+        <div className="flex items-center justify-between gap-2 h-16 md:h-24 py-2 border-b border-gray-200">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-3">
-            <img src="/images/giftbhejo.jpeg" alt="GiftsBhejo" className="h-20 w-auto" loading="lazy" />
-            {/* <span className="text-2xl font-bold text-gray-900">GiftsBhejo</span> */}
+          <Link to="/" className="flex-shrink-0 flex items-center min-w-0 max-w-[55%] sm:max-w-[40%] md:max-w-none">
+            <img
+              src="/images/giftbhejo.jpeg"
+              alt="GiftsBhejo"
+              className="h-12 sm:h-14 md:h-20 lg:h-24 w-auto max-w-full object-contain"
+              loading="lazy"
+            />
           </Link>
 
-          {/* Desktop Navigation - Right Side */}
-          <nav className="hidden md:flex items-center space-x-6">
+          {/* Desktop Navigation - Center */}
+          <nav className="hidden md:flex items-center space-x-6 flex-shrink-0">
             <Link to="/" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
               Home
             </Link>
@@ -93,25 +97,25 @@ const Header = () => {
           </nav>
 
           {/* Right Side Icons */}
-          <div className="flex items-center space-x-4">
-            {/* Mobile Menu Toggle */}
-            <button
-              onClick={toggleMobileMenu}
-              className="md:hidden p-2 text-gray-700 hover:text-blue-600 transition-colors"
-              aria-label="Toggle menu"
-            >
-              {isMobileMenuOpen ? <FaTimes className="text-2xl" /> : <FaBars className="text-2xl" />}
-            </button>
-
+          <div className="flex items-center space-x-2 sm:space-x-4 flex-shrink-0">
             {/* Cart */}
             <Link to="/cart" className="relative p-2 text-gray-700 hover:text-blue-600 transition-colors">
-              <FaShoppingCart className="text-2xl" />
+              <FaShoppingCart className="text-xl sm:text-2xl" />
               {cartCount > 0 && (
                 <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
                   {cartCount}
                 </span>
               )}
             </Link>
+
+            {/* Mobile Menu Toggle */}
+            <button
+              onClick={toggleMobileMenu}
+              className="md:hidden p-2 text-gray-700 hover:text-blue-600 transition-colors"
+              aria-label="Toggle menu"
+            >
+              {isMobileMenuOpen ? <FaTimes className="text-xl" /> : <FaBars className="text-xl" />}
+            </button>
 
             {/* User Menu */}
             {isAuthenticated ? (

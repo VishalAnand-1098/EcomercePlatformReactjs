@@ -71,7 +71,11 @@ async function fetchOrder(orderId: string) {
 }
 
 // ─── Utility ─────────────────────────────────────────────────────────────────
-function shortId(id: string) { return String(id).slice(0, 8).toUpperCase(); }
+function formatOrderId(id: string) {
+  if (!id) return '';
+  const numeric = parseInt(id.replace(/-/g, '').slice(0, 8), 16) % 10000;
+  return `Order_Id${String(numeric).padStart(4, '0')}`;
+}
 function price(v: number) { return `₹${Number(v || 0).toFixed(2)}`; }
 
 function addr(o: Record<string, string>) {
@@ -237,7 +241,7 @@ function buildWelcome({ name, email, password, siteUrl }: {
 // deno-lint-ignore no-explicit-any
 function buildOrderPlaced(order: any, siteUrl?: string) {
   const site = siteUrl ?? SITE_URL;
-  const ref  = shortId(order.id);
+  const ref  = formatOrderId(order.id);
   const name = order.shipping_name ?? order.ecommerce_users?.name ?? 'Customer';
   const itemRows = (order.items ?? []).map((item: Record<string, unknown>) => {
     const prod = item.ecommerce_products as Record<string, unknown> | undefined;
@@ -269,7 +273,7 @@ function buildOrderPlaced(order: any, siteUrl?: string) {
       <strong>Order:</strong> &nbsp;
       <code style="background:#fdf2f8;padding:4px 12px;border-radius:6px;
                    color:#be185d;font-weight:700;font-size:15px;">
-        #${ref}
+        ${ref}
       </code>
       &nbsp;&nbsp;
       ${badge('CONFIRMED', '#059669')}
@@ -312,16 +316,16 @@ function buildOrderPlaced(order: any, siteUrl?: string) {
   `;
 
   return {
-    subject: `✅ Order Confirmed — #${ref} | GiftsBhejo`,
-    html: layout('Order Confirmed', `Your order #${ref} has been placed`, body, site),
-    text: `Hi ${name}, your order #${ref} is confirmed. Total: ${price(order.total_amount ?? 0)}. View: ${site}/order-success/${order.id}`,
+    subject: `✅ Order Confirmed — ${ref} | GiftsBhejo`,
+    html: layout('Order Confirmed', `Your order ${ref} has been placed`, body, site),
+    text: `Hi ${name}, your order ${ref} is confirmed. Total: ${price(order.total_amount ?? 0)}. View: ${site}/order-success/${order.id}`,
   };
 }
 
 // deno-lint-ignore no-explicit-any
 function buildOrderShipped(order: any, siteUrl?: string) {
   const site = siteUrl ?? SITE_URL;
-  const ref  = shortId(order.id);
+  const ref  = formatOrderId(order.id);
   const name = order.shipping_name ?? order.ecommerce_users?.name ?? 'Customer';
   const itemNames = (order.items ?? [])
     .map((i: Record<string, unknown>) => {
@@ -352,7 +356,7 @@ function buildOrderShipped(order: any, siteUrl?: string) {
           <p style="margin:4px 0;font-size:14px;color:#374151;">
             <strong>Order:</strong>
             <code style="background:#dbeafe;padding:2px 8px;border-radius:4px;color:#1e40af;font-weight:700;">
-              #${ref}
+              ${ref}
             </code>
             &nbsp; ${badge('SHIPPED', '#2563eb')}
           </p>
@@ -397,16 +401,16 @@ function buildOrderShipped(order: any, siteUrl?: string) {
   `;
 
   return {
-    subject: `🚚 Shipped — Order #${ref} is on its way | GiftsBhejo`,
-    html: layout('Order Shipped', `Order #${ref} is on its way to you`, body, site),
-    text: `Hi ${name}, your order #${ref} has shipped. Track it: ${site}/dashboard`,
+    subject: `🚚 Shipped — ${ref} is on its way | GiftsBhejo`,
+    html: layout('Order Shipped', `Order ${ref} is on its way to you`, body, site),
+    text: `Hi ${name}, your order ${ref} has shipped. Track it: ${site}/dashboard`,
   };
 }
 
 // deno-lint-ignore no-explicit-any
 function buildOrderDelivered(order: any, siteUrl?: string) {
   const site = siteUrl ?? SITE_URL;
-  const ref  = shortId(order.id);
+  const ref  = formatOrderId(order.id);
   const name = order.shipping_name ?? order.ecommerce_users?.name ?? 'Customer';
 
   const body = `
@@ -427,7 +431,7 @@ function buildOrderDelivered(order: any, siteUrl?: string) {
         <td style="padding:20px 24px;text-align:center;">
           <p style="margin:0 0 6px;font-size:14px;color:#374151;">
             Order <code style="background:#d1fae5;padding:2px 8px;border-radius:4px;
-                               color:#065f46;font-weight:700;">#${ref}</code>
+                               color:#065f46;font-weight:700;">${ref}</code>
             &nbsp; ${badge('DELIVERED ✓', '#059669')}
           </p>
           <p style="margin:8px 0 0;font-size:13px;color:#6b7280;">
@@ -482,9 +486,9 @@ function buildOrderDelivered(order: any, siteUrl?: string) {
   `;
 
   return {
-    subject: `🎉 Delivered — Order #${ref} has arrived | GiftsBhejo`,
-    html: layout('Order Delivered', `Your order #${ref} was delivered successfully`, body, site),
-    text: `Hi ${name}, your order #${ref} has been delivered. Shop again: ${site}/products`,
+    subject: `🎉 Delivered — ${ref} has arrived | GiftsBhejo`,
+    html: layout('Order Delivered', `Your order ${ref} was delivered successfully`, body, site),
+    text: `Hi ${name}, your order ${ref} has been delivered. Shop again: ${site}/products`,
   };
 }
 

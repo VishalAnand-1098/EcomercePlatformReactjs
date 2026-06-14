@@ -215,28 +215,28 @@ const Checkout = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
-      <div className="container mx-auto px-4">
-        <h1 className="text-4xl font-bold text-gray-900 mb-8">Checkout</h1>
+    <div className="min-h-screen bg-gray-50 py-6 md:py-12">
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6">
+        <h1 className="text-2xl sm:text-4xl font-bold text-gray-900 mb-6 md:mb-8">Checkout</h1>
 
         {/* Progress Steps */}
-        <div className="flex items-center justify-center mb-8">
-          <div className="flex items-center">
-            <div className={`flex items-center justify-center w-10 h-10 rounded-full ${currentStep >= 1 ? 'bg-blue-600 text-white' : 'bg-gray-300 text-gray-600'}`}>
+        <div className="flex items-center justify-center mb-6 md:mb-8 overflow-x-auto">
+          <div className="flex items-center min-w-0">
+            <div className={`flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-full flex-shrink-0 ${currentStep >= 1 ? 'bg-blue-600 text-white' : 'bg-gray-300 text-gray-600'}`}>
               1
             </div>
-            <span className={`ml-2 font-semibold ${currentStep >= 1 ? 'text-blue-600' : 'text-gray-500'}`}>
+            <span className={`ml-2 font-semibold text-sm sm:text-base ${currentStep >= 1 ? 'text-blue-600' : 'text-gray-500'}`}>
               Shipping
             </span>
           </div>
           
-          <div className={`w-24 h-1 mx-4 ${currentStep >= 2 ? 'bg-blue-600' : 'bg-gray-300'}`}></div>
+          <div className={`w-12 sm:w-24 h-1 mx-2 sm:mx-4 flex-shrink-0 ${currentStep >= 2 ? 'bg-blue-600' : 'bg-gray-300'}`}></div>
           
-          <div className="flex items-center">
-            <div className={`flex items-center justify-center w-10 h-10 rounded-full ${currentStep >= 2 ? 'bg-blue-600 text-white' : 'bg-gray-300 text-gray-600'}`}>
+          <div className="flex items-center min-w-0">
+            <div className={`flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-full flex-shrink-0 ${currentStep >= 2 ? 'bg-blue-600 text-white' : 'bg-gray-300 text-gray-600'}`}>
               2
             </div>
-            <span className={`ml-2 font-semibold ${currentStep >= 2 ? 'text-blue-600' : 'text-gray-500'}`}>
+            <span className={`ml-2 font-semibold text-sm sm:text-base ${currentStep >= 2 ? 'text-blue-600' : 'text-gray-500'}`}>
               Payment
             </span>
           </div>

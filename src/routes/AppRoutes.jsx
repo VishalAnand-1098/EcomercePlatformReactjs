@@ -66,9 +66,11 @@ const AppRoutes = () => {
         path="/admin"
         element={
           <ProtectedRoute adminOnly>
-            <div className="flex">
+            <div className="flex flex-col md:flex-row w-full min-w-0">
               <Sidebar />
-              <AdminDashboard />
+              <div className="flex-1 min-w-0 w-full">
+                <AdminDashboard />
+              </div>
             </div>
           </ProtectedRoute>
         }
@@ -77,9 +79,11 @@ const AppRoutes = () => {
         path="/admin/products"
         element={
           <ProtectedRoute adminOnly>
-            <div className="flex">
+            <div className="flex flex-col md:flex-row w-full min-w-0">
               <Sidebar />
-              <ManageProducts />
+              <div className="flex-1 min-w-0 w-full">
+                <ManageProducts />
+              </div>
             </div>
           </ProtectedRoute>
         }
@@ -88,9 +92,11 @@ const AppRoutes = () => {
         path="/admin/orders"
         element={
           <ProtectedRoute adminOnly>
-            <div className="flex">
+            <div className="flex flex-col md:flex-row w-full min-w-0">
               <Sidebar />
-              <ManageOrders />
+              <div className="flex-1 min-w-0 w-full">
+                <ManageOrders />
+              </div>
             </div>
           </ProtectedRoute>
         }
@@ -99,9 +105,11 @@ const AppRoutes = () => {
         path="/admin/categories"
         element={
           <ProtectedRoute adminOnly>
-            <div className="flex">
+            <div className="flex flex-col md:flex-row w-full min-w-0">
               <Sidebar />
-              <ManageCategories />
+              <div className="flex-1 min-w-0 w-full">
+                <ManageCategories />
+              </div>
             </div>
           </ProtectedRoute>
         }

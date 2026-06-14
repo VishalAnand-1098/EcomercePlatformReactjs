@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { getOrderDetails } from '../services/orderService';
-import { formatPrice, formatDateTime, formatOrderStatus } from '../utils/formatters';
+import { formatPrice, formatDateTime, formatOrderStatus, formatOrderId } from '../utils/formatters';
 import Button from '../components/common/Button';
 import Loader from '../components/common/Loader';
 import { FaCheckCircle } from 'react-icons/fa';
@@ -44,9 +44,9 @@ const OrderSuccess = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
-      <div className="container mx-auto px-4 max-w-3xl">
-        <div className="bg-white rounded-lg shadow-md p-8">
+    <div className="min-h-screen bg-gray-50 py-6 md:py-12">
+      <div className="w-full max-w-3xl mx-auto px-4 sm:px-6">
+        <div className="bg-white rounded-lg shadow-md p-4 sm:p-8">
           {/* Success Icon */}
           <div className="text-center mb-8">
             <FaCheckCircle className="text-6xl text-green-500 mx-auto mb-4" />
@@ -56,10 +56,10 @@ const OrderSuccess = () => {
 
           {/* Order Info */}
           <div className="border-t border-b py-6 mb-6">
-            <div className="grid grid-cols-2 gap-4 text-sm">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
               <div>
                 <p className="text-gray-600">Order ID</p>
-                <p className="font-semibold">{order.id}</p>
+                <p className="font-semibold">{formatOrderId(order.id)}</p>
               </div>
               <div>
                 <p className="text-gray-600">Order Date</p>
@@ -121,7 +121,7 @@ const OrderSuccess = () => {
           </div>
 
           {/* Actions */}
-          <div className="flex justify-center space-x-4">
+          <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4 sm:space-x-0">
             <Link to="/dashboard">
               <Button variant="primary" size="lg">
                 View Orders

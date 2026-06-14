@@ -27,17 +27,17 @@ const CartItem = ({ item }) => {
   const subtotal = discountedPrice * item.quantity;
 
   return (
-    <div className="flex items-center space-x-4 p-4 bg-white rounded-lg shadow-md">
+    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 bg-white rounded-lg shadow-md">
       {/* Product Image */}
       <img
         src={product.image_url || 'https://via.placeholder.com/100'}
         alt={product.name}
-        className="w-24 h-24 object-cover rounded-lg"
+        className="w-20 h-20 sm:w-24 sm:h-24 object-cover rounded-lg flex-shrink-0"
       />
 
       {/* Product Details */}
-      <div className="flex-1">
-        <h3 className="text-lg font-semibold text-gray-900">{product.name}</h3>
+      <div className="flex-1 min-w-0 w-full sm:w-auto">
+        <h3 className="text-base sm:text-lg font-semibold text-gray-900 truncate">{product.name}</h3>
         <div className="flex items-center gap-2 mt-1">
           <p className="text-blue-600 font-semibold">{formatPrice(discountedPrice)}</p>
           {hasDiscount && (
@@ -53,42 +53,45 @@ const CartItem = ({ item }) => {
         </div>
       </div>
 
-      {/* Quantity Controls */}
-      <div className="flex items-center space-x-3">
+      {/* Quantity & Subtotal Row */}
+      <div className="flex items-center justify-between sm:justify-end w-full sm:w-auto gap-4 sm:gap-6 flex-wrap">
+        {/* Quantity Controls */}
+        <div className="flex items-center space-x-3">
+          <button
+            onClick={() => handleQuantityChange(item.quantity - 1)}
+            className="p-2 bg-gray-200 hover:bg-gray-300 rounded-lg transition-colors"
+            disabled={item.quantity <= 1}
+          >
+            <FaMinus className="text-gray-600" />
+          </button>
+          
+          <span className="text-lg font-semibold min-w-[2rem] text-center">
+            {item.quantity}
+          </span>
+          
+          <button
+            onClick={() => handleQuantityChange(item.quantity + 1)}
+            className="p-2 bg-gray-200 hover:bg-gray-300 rounded-lg transition-colors"
+            disabled={item.quantity >= product.stock}
+          >
+            <FaPlus className="text-gray-600" />
+          </button>
+        </div>
+
+        {/* Subtotal */}
+        <div className="text-right min-w-[80px]">
+          <p className="text-lg font-bold text-gray-900">{formatPrice(subtotal)}</p>
+        </div>
+
+        {/* Remove Button */}
         <button
-          onClick={() => handleQuantityChange(item.quantity - 1)}
-          className="p-2 bg-gray-200 hover:bg-gray-300 rounded-lg transition-colors"
-          disabled={item.quantity <= 1}
+          onClick={handleRemove}
+          className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+          title="Remove from cart"
         >
-          <FaMinus className="text-gray-600" />
-        </button>
-        
-        <span className="text-lg font-semibold min-w-[2rem] text-center">
-          {item.quantity}
-        </span>
-        
-        <button
-          onClick={() => handleQuantityChange(item.quantity + 1)}
-          className="p-2 bg-gray-200 hover:bg-gray-300 rounded-lg transition-colors"
-          disabled={item.quantity >= product.stock}
-        >
-          <FaPlus className="text-gray-600" />
+          <FaTrash />
         </button>
       </div>
-
-      {/* Subtotal */}
-      <div className="text-right min-w-[100px]">
-        <p className="text-lg font-bold text-gray-900">{formatPrice(subtotal)}</p>
-      </div>
-
-      {/* Remove Button */}
-      <button
-        onClick={handleRemove}
-        className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-        title="Remove from cart"
-      >
-        <FaTrash />
-      </button>
     </div>
   );
 };

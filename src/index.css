@@ -28,6 +28,19 @@
   opacity: 0;
 }
 
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-up {
+  animation: slideUp 0.3s ease-out forwards;
+}
+
 .animation-delay-600 {
   animation-delay: 0.6s;
   opacity: 0;

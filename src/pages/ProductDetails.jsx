@@ -8,7 +8,6 @@ import { getProductImages } from '../utils/productHelpers';
 import Button from '../components/common/Button';
 import Loader from '../components/common/Loader';
 import ProductImageGallery from '../components/product/ProductImageGallery';
-import ProductDescription from '../components/product/ProductDescription';
 import { FaShoppingCart, FaMinus, FaPlus } from 'react-icons/fa';
 
 const ProductDetails = () => {
@@ -130,7 +129,7 @@ const ProductDetails = () => {
 
               <div className="mb-6">
                 <h2 className="text-xl font-semibold mb-2">Description</h2>
-                <ProductDescription html={product.description} />
+                <p className="text-gray-700 leading-relaxed">{product.description}</p>
               </div>
 
               <div className="mb-6">

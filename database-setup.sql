@@ -13,7 +13,7 @@
 -- DROP TABLE IF EXISTS ecommerce_users CASCADE;
 
 -- =====================================================
--- 1. USERS TABLE
+-- 1. USERS TABLE sss
 -- =====================================================
 CREATE TABLE ecommerce_users (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),

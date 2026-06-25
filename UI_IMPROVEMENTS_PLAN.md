@@ -5,7 +5,7 @@ Five targeted improvements for the GiftsBhejo storefront: cleaner product cards,
 
 ---
 
-## 1. Product Card — Hide Description & Fix Add to Cart Visibility
+## 1. Product Cardvishal — Hide Description & Fix Add to Cart Visibility
 
 **Problem:** Long descriptions push the Add to Cart button off-screen on mobile and desktop grids.
 

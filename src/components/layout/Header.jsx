@@ -2,75 +2,36 @@ import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { useCart } from '../../hooks/useCart';
-import { FaShoppingCart, FaUser, FaSignOutAlt, FaUserCircle, FaBox, FaBars, FaTimes, FaChevronDown } from 'react-icons/fa';
+import { FaShoppingCart, FaSignOutAlt, FaUserCircle, FaBars, FaTimes, FaChevronDown, FaChevronRight } from 'react-icons/fa';
 import { MdDashboard } from 'react-icons/md';
 import { getAllCategories } from '../../services/categoryService';
-import { getAllProducts } from '../../services/productService';
+import { getCategoryProductsUrl } from '../../utils/categoryHelpers';
 
 const Header = () => {
   const { isAuthenticated, user, logoutUser } = useAuth();
   const { getCartCount } = useCart();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [categories, setCategories] = useState([]);
-  const [products, setProducts] = useState([]);
   const [hoveredCategory, setHoveredCategory] = useState(null);
+  const [expandedMobileCategory, setExpandedMobileCategory] = useState(null);
 
   const cartCount = getCartCount();
 
-  const fetchCategories = async () => {
-    try {
-      const data = await getAllCategories();
-      setCategories(data);
-    } catch (error) {
-      console.error('Error fetching categories:', error);
-    }
-  };
-
-  const fetchProducts = async () => {
-    try {
-      const response = await getAllProducts({ limit: 50 });
-      setProducts(response.products || []);
-    } catch (error) {
-      console.error('Error fetching products:', error);
-    }
-  };
-
   useEffect(() => {
-    fetchCategories();
-    fetchProducts();
+    getAllCategories().then(setCategories).catch(console.error);
   }, []);
 
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
-  };
-
+  const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
   const closeMobileMenu = () => {
     setIsMobileMenuOpen(false);
+    setExpandedMobileCategory(null);
   };
 
-  // Get only parent categories (no parent_id)
-  const getParentCategories = () => {
-    return categories.filter(cat => !cat.parent_id);
-  };
-
-  // Get subcategories for a parent category
-  const getSubcategories = (parentId) => {
-    return categories.filter(cat => cat.parent_id === parentId);
-  };
-
-  // Get products for a specific category
-  const getProductsByCategory = (categoryId) => {
-    return products.filter(product => product.category_id === categoryId).slice(0, 6);
-  };
-
-  // Get products directly under parent category (not in any subcategory)
-  const getDirectCategoryProducts = (categoryId) => {
-    return products.filter(product => product.category_id === categoryId).slice(0, 6);
-  };
+  const getParentCategories = () => categories.filter((cat) => !cat.parent_id);
+  const getSubcategories = (parentId) => categories.filter((cat) => cat.parent_id === parentId);
 
   return (
     <header className="bg-white shadow-md sticky top-0 z-50 w-full">
-      {/* Top Header */}
       <div className="w-full max-w-7xl mx-auto px-3 sm:px-4">
         <div className="flex items-center justify-between gap-2 h-16 md:h-24 py-2 border-b border-gray-200">
           {/* Logo */}
@@ -83,23 +44,9 @@ const Header = () => {
             />
           </Link>
 
-          {/* Desktop Navigation - Center */}
-          <nav className="hidden md:flex items-center space-x-6 flex-shrink-0">
-            <Link to="/" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
-              Home
-            </Link>
-            <Link to="/products" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
-              Products
-            </Link>
-            <Link to="/contact" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
-              Contact
-            </Link>
-          </nav>
-
           {/* Right Side Icons */}
           <div className="flex items-center space-x-2 sm:space-x-4 flex-shrink-0">
-            {/* Cart */}
-            <Link to="/cart" className="relative p-2 text-gray-700 hover:text-blue-600 transition-colors">
+            <Link to="/cart" className="relative p-2 text-gray-700 hover:text-pink-600 transition-colors">
               <FaShoppingCart className="text-xl sm:text-2xl" />
               {cartCount > 0 && (
                 <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
@@ -108,30 +55,28 @@ const Header = () => {
               )}
             </Link>
 
-            {/* Mobile Menu Toggle */}
             <button
               onClick={toggleMobileMenu}
-              className="md:hidden p-2 text-gray-700 hover:text-blue-600 transition-colors"
+              className="md:hidden p-2 text-gray-700 hover:text-pink-600 transition-colors"
               aria-label="Toggle menu"
             >
               {isMobileMenuOpen ? <FaTimes className="text-xl" /> : <FaBars className="text-xl" />}
             </button>
 
-            {/* User Menu */}
             {isAuthenticated ? (
               <div className="hidden md:flex items-center space-x-3">
                 <Link
                   to="/dashboard"
-                  className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 transition-colors"
+                  className="flex items-center space-x-2 text-gray-700 hover:text-pink-600 transition-colors"
                 >
                   <FaUserCircle className="text-2xl" />
                   <span className="hidden lg:inline">{user?.name}</span>
                 </Link>
-                
+
                 {user?.role === 'admin' && (
                   <Link
                     to="/admin"
-                    className="flex items-center space-x-1 px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                    className="flex items-center space-x-1 px-3 py-1.5 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors"
                   >
                     <MdDashboard />
                     <span className="hidden lg:inline">Admin</span>
@@ -151,13 +96,13 @@ const Header = () => {
               <div className="hidden md:flex items-center space-x-3">
                 <Link
                   to="/login"
-                  className="px-4 py-2 text-blue-600 hover:text-blue-700 font-medium transition-colors"
+                  className="px-4 py-2 text-pink-600 hover:text-pink-700 font-medium transition-colors"
                 >
                   Login
                 </Link>
                 <Link
                   to="/register"
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                  className="px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors"
                 >
                   Sign Up
                 </Link>
@@ -166,190 +111,172 @@ const Header = () => {
           </div>
         </div>
 
-        {/* Category Navigation Bar */}
+        {/* Desktop Category Navigation */}
         <div className="hidden md:block">
           <nav className="flex items-center justify-center space-x-1 py-3">
-            {getParentCategories().map((category) => (
-              <div
-                key={category.id}
-                className="relative"
-                onMouseEnter={() => setHoveredCategory(category.id)}
-                onMouseLeave={() => setHoveredCategory(null)}
-              >
-                <Link
-                  to={`/products?category=${category.id}`}
-                  className="px-4 py-2 text-sm font-semibold text-gray-700 hover:text-pink-600 uppercase tracking-wide flex items-center space-x-1 transition-colors"
+            {getParentCategories().map((category) => {
+              const subcats = getSubcategories(category.id);
+              return (
+                <div
+                  key={category.id}
+                  className="relative"
+                  onMouseEnter={() => setHoveredCategory(category.id)}
+                  onMouseLeave={() => setHoveredCategory(null)}
                 >
-                  <span>{category.name}</span>
-                  {getSubcategories(category.id).length > 0 && (
-                    <FaChevronDown className="text-xs" />
-                  )}
-                </Link>
-
-                {/* Mega Menu Dropdown */}
-                {hoveredCategory === category.id && (getSubcategories(category.id).length > 0 || getDirectCategoryProducts(category.id).length > 0) && (
-                  <div 
-                    className="absolute left-1/2 transform -translate-x-1/2 top-full mt-0 bg-white shadow-2xl border-t-2 border-pink-500 z-50"
-                    style={{ minWidth: '900px', maxWidth: '1200px' }}
+                  <Link
+                    to={getCategoryProductsUrl(category)}
+                    className="px-4 py-2 text-sm font-semibold text-gray-700 hover:text-pink-600 uppercase tracking-wide flex items-center space-x-1 transition-colors"
                   >
-                    <div className="p-6">
-                      <h3 className="text-base font-bold text-pink-600 uppercase tracking-wide mb-4 border-b-2 border-pink-300 pb-2">
-                        {category.name}
-                      </h3>
-                      
-                      <div className="grid grid-cols-4 gap-6">
-                        {/* Show subcategories with their products */}
-                        {getSubcategories(category.id).length > 0 ? (
-                          getSubcategories(category.id).map((subcat) => {
-                            const subcatProducts = getProductsByCategory(subcat.id);
-                            return (
-                              <div key={subcat.id} className="space-y-2">
-                                {/* Subcategory Header */}
-                                <Link
-                                  to={`/products?category=${subcat.id}`}
-                                  className="block"
-                                >
-                                  <h4 className="text-sm font-bold text-gray-800 hover:text-pink-600 uppercase tracking-wide mb-2 transition-colors">
-                                    {subcat.name}
-                                  </h4>
-                                </Link>
-                                
-                                {/* Products under this subcategory */}
-                                {subcatProducts.length > 0 ? (
-                                  <ul className="space-y-1.5 pl-2 border-l-2 border-gray-200">
-                                    {subcatProducts.map((product) => (
-                                      <li key={product.id}>
-                                        <Link
-                                          to={`/products/${product.id}`}
-                                          className="block text-sm text-gray-600 hover:text-pink-600 transition-colors py-0.5"
-                                        >
-                                          • {product.name}
-                                        </Link>
-                                      </li>
-                                    ))}
-                                  </ul>
-                                ) : (
-                                  <p className="text-xs text-gray-400 italic pl-2">No products yet</p>
-                                )}
-                              </div>
-                            );
-                          })
-                        ) : (
-                          /* If no subcategories, show direct category products */
-                          <div className="col-span-4">
-                            {getDirectCategoryProducts(category.id).length > 0 ? (
-                              <div className="grid grid-cols-4 gap-4">
-                                {getDirectCategoryProducts(category.id).map((product) => (
-                                  <Link
-                                    key={product.id}
-                                    to={`/products/${product.id}`}
-                                    className="text-sm text-gray-700 hover:text-pink-600 transition-colors py-1"
-                                  >
-                                    • {product.name}
-                                  </Link>
-                                ))}
-                              </div>
-                            ) : (
-                              <p className="text-gray-500 text-center py-4">No products available</p>
-                            )}
-                          </div>
-                        )}
-                      </div>
-                      
-                      {/* View All Link */}
-                      <div className="mt-4 pt-3 border-t border-gray-200 text-center">
-                        <Link
-                          to={`/products?category=${category.id}`}
-                          className="inline-block text-sm text-blue-600 hover:text-blue-700 font-semibold"
-                        >
-                          View All {category.name} →
-                        </Link>
+                    <span>{category.name}</span>
+                    {subcats.length > 0 && <FaChevronDown className="text-xs" />}
+                  </Link>
+
+                  {/* Mega Menu — categories & subcategories only */}
+                  {hoveredCategory === category.id && subcats.length > 0 && (
+                    <div className="absolute left-1/2 transform -translate-x-1/2 top-full mt-0 bg-white shadow-2xl border-t-2 border-pink-500 z-50 rounded-b-xl min-w-[320px] max-w-[600px]">
+                      <div className="p-5">
+                        <h3 className="text-sm font-bold text-pink-600 uppercase tracking-wide mb-4 border-b border-pink-200 pb-2">
+                          {category.name}
+                        </h3>
+
+                        <div className="grid grid-cols-2 gap-3">
+                          {subcats.map((subcat) => (
+                            <Link
+                              key={subcat.id}
+                              to={getCategoryProductsUrl(subcat)}
+                              className="block px-3 py-2.5 text-sm font-medium text-gray-700 hover:text-pink-600 hover:bg-pink-50 rounded-lg transition-colors"
+                            >
+                              {subcat.name}
+                            </Link>
+                          ))}
+                        </div>
+
+                        <div className="mt-4 pt-3 border-t border-gray-100 text-center">
+                          <Link
+                            to={getCategoryProductsUrl(category)}
+                            className="inline-block text-sm text-pink-600 hover:text-pink-700 font-semibold"
+                          >
+                            View All {category.name} →
+                          </Link>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                )}
-              </div>
-            ))}
+                  )}
+                </div>
+              );
+            })}
           </nav>
         </div>
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden border-t border-gray-200 py-4">
-            <nav className="flex flex-col space-y-4">
-              <Link
-                to="/"
-                onClick={closeMobileMenu}
-                className="text-gray-700 hover:text-blue-600 font-medium transition-colors px-4 py-2"
-              >
-                Home
-              </Link>
-              <Link
-                to="/products"
-                onClick={closeMobileMenu}
-                className="text-gray-700 hover:text-blue-600 font-medium transition-colors px-4 py-2"
-              >
-                Products
-              </Link>
-              <Link
-                to="/contact"
-                onClick={closeMobileMenu}
-                className="text-gray-700 hover:text-blue-600 font-medium transition-colors px-4 py-2"
-              >
-                Contact
-              </Link>
-              
-              {isAuthenticated ? (
-                <>
-                  <Link
-                    to="/dashboard"
-                    onClick={closeMobileMenu}
-                    className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 transition-colors px-4 py-2"
-                  >
-                    <FaUserCircle className="text-xl" />
-                    <span>My Account ({user?.name})</span>
-                  </Link>
-                  
-                  {user?.role === 'admin' && (
-                    <Link
-                      to="/admin"
-                      onClick={closeMobileMenu}
-                      className="flex items-center space-x-2 text-gray-700 hover:text-blue-600 transition-colors px-4 py-2"
-                    >
-                      <MdDashboard />
-                      <span>Admin Dashboard</span>
-                    </Link>
-                  )}
+          <div className="md:hidden border-t border-gray-200 py-3 max-h-[70vh] overflow-y-auto">
+            <nav className="flex flex-col">
+              {/* Mobile Categories */}
+              <div className="px-4 py-2">
+                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Categories</p>
+                {getParentCategories().map((category) => {
+                  const subcats = getSubcategories(category.id);
+                  const isExpanded = expandedMobileCategory === category.id;
 
-                  <button
-                    onClick={() => {
-                      logoutUser();
-                      closeMobileMenu();
-                    }}
-                    className="flex items-center space-x-2 text-gray-700 hover:text-red-600 transition-colors px-4 py-2 text-left"
-                  >
-                    <FaSignOutAlt />
-                    <span>Logout</span>
-                  </button>
-                </>
-              ) : (
-                <>
-                  <Link
-                    to="/login"
-                    onClick={closeMobileMenu}
-                    className="text-blue-600 hover:text-blue-700 font-medium transition-colors px-4 py-2"
-                  >
-                    Login
-                  </Link>
-                  <Link
-                    to="/register"
-                    onClick={closeMobileMenu}
-                    className="bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors px-4 py-2 text-center mx-4"
-                  >
-                    Sign Up
-                  </Link>
-                </>
-              )}
+                  return (
+                    <div key={category.id} className="mb-1">
+                      {subcats.length > 0 ? (
+                        <>
+                          <button
+                            type="button"
+                            onClick={() => setExpandedMobileCategory(isExpanded ? null : category.id)}
+                            className="w-full flex items-center justify-between px-3 py-2.5 text-gray-800 font-semibold hover:bg-gray-50 rounded-lg"
+                          >
+                            <span>{category.name}</span>
+                            <FaChevronRight className={`text-xs transition-transform ${isExpanded ? 'rotate-90' : ''}`} />
+                          </button>
+                          {isExpanded && (
+                            <div className="ml-3 border-l-2 border-pink-200 pl-3">
+                              <Link
+                                to={getCategoryProductsUrl(category)}
+                                onClick={closeMobileMenu}
+                                className="block px-3 py-2 text-sm text-pink-600 font-medium"
+                              >
+                                All {category.name}
+                              </Link>
+                              {subcats.map((sub) => (
+                                <Link
+                                  key={sub.id}
+                                  to={getCategoryProductsUrl(sub)}
+                                  onClick={closeMobileMenu}
+                                  className="block px-3 py-2 text-sm text-gray-600 hover:text-pink-600"
+                                >
+                                  {sub.name}
+                                </Link>
+                              ))}
+                            </div>
+                          )}
+                        </>
+                      ) : (
+                        <Link
+                          to={getCategoryProductsUrl(category)}
+                          onClick={closeMobileMenu}
+                          className="block px-3 py-2.5 text-gray-800 font-semibold hover:bg-gray-50 rounded-lg"
+                        >
+                          {category.name}
+                        </Link>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className="border-t border-gray-100 mt-2 pt-2 px-4 space-y-1">
+                {isAuthenticated ? (
+                  <>
+                    <Link
+                      to="/dashboard"
+                      onClick={closeMobileMenu}
+                      className="flex items-center space-x-2 text-gray-700 hover:text-pink-600 px-3 py-2.5 rounded-lg"
+                    >
+                      <FaUserCircle className="text-xl" />
+                      <span>My Account ({user?.name})</span>
+                    </Link>
+
+                    {user?.role === 'admin' && (
+                      <Link
+                        to="/admin"
+                        onClick={closeMobileMenu}
+                        className="flex items-center space-x-2 text-gray-700 hover:text-pink-600 px-3 py-2.5 rounded-lg"
+                      >
+                        <MdDashboard />
+                        <span>Admin Dashboard</span>
+                      </Link>
+                    )}
+
+                    <button
+                      onClick={() => { logoutUser(); closeMobileMenu(); }}
+                      className="flex items-center space-x-2 text-gray-700 hover:text-red-600 px-3 py-2.5 rounded-lg w-full text-left"
+                    >
+                      <FaSignOutAlt />
+                      <span>Logout</span>
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <Link
+                      to="/login"
+                      onClick={closeMobileMenu}
+                      className="block text-pink-600 font-medium px-3 py-2.5"
+                    >
+                      Login
+                    </Link>
+                    <Link
+                      to="/register"
+                      onClick={closeMobileMenu}
+                      className="block bg-pink-600 text-white rounded-lg hover:bg-pink-700 px-3 py-2.5 text-center"
+                    >
+                      Sign Up
+                    </Link>
+                  </>
+                )}
+              </div>
             </nav>
           </div>
         )}

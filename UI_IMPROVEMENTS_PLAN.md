@@ -1,6 +1,6 @@
 # UI Improvements Implementation Plan
 
-## Overview hy
+## Overview
 Five targeted improvements for the GiftsBhejo storefront: cleaner product cards, HTML descriptions, premium mobile filters, category-only mega menu with slug URLs, and simplified navigation.
 
 ---
